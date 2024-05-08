@@ -1,3 +1,7 @@
 build/*
 
 .vscode/*
+
+*.asm
+*.o
+*.txt
