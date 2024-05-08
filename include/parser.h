@@ -16,7 +16,7 @@ class Parser{
     public:
     Parser(const Grammar&);
     ~Parser();
-    AST* parse(TokenizedData&);
+    AST* parse(const Grammar&,TokenizedData&);
 };
 
 #endif

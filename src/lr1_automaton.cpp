@@ -1,47 +1,46 @@
 #include "lr1_automaton.h"
 
 DottedRule::DottedRule(){}
-DottedRule::DottedRule(TokenType t,production p){
-    this->left = t;
-    this->right = p;
+DottedRule::DottedRule(Reduction reduction){
+    this->rule = reduction;
     this->dot_index = 0;
+}
+TokenType DottedRule::get_right_at(int id)const{
+    return this->rule.get_right_index(id);
 }
 LookaheadRule::~LookaheadRule(){}
 LookaheadRule::LookaheadRule(){}
 void LookaheadRule::move_dot(){
-    if(this->dot_index < this->right.size())
+    if(this->dot_index < this->right_size())
         this->dot_index++;
 }
 void LookaheadRule::print()const{
     std::cout<<(*this);
 }
 TokenType LookaheadRule::get_dotted_symbol()const{
-    if(this->dot_index == this->right.size()){
+    if(this->dot_index == this->right_size()){
         return TokenType::NoneType;
     }
-    return this->right.at(this->dot_index);
+    return this->get_right_at(this->dot_index);
 }
 TokenType LookaheadRule::get_follow_dotted_symbol()const{
-    if(this->dot_index<this->right.size() - 1){
-        return this->right.at(this->dot_index+1);
+    if(this->dot_index<this->right_size() - 1){
+        return this->get_right().at(this->dot_index+1);
     }
     return TokenType::NoneType;
 }
 LookaheadRule::LookaheadRule(const LookaheadRule& other){
     this->dot_index = other.dot_index;
-    this->left = other.left;
-    this->right = other.right;
+    this->rule = other.rule;
     this->lookahead = other.lookahead;
 }
 LookaheadRule::LookaheadRule(const DottedRule& other,std::set<TokenType> la){
     this->dot_index = other.dot_index;
-    this->left = other.left;
-    this->right = other.right;
+    this->rule = other.rule;
     this->lookahead = la;
 }
-LookaheadRule::LookaheadRule(TokenType t,production p, std::set<TokenType> la){
-    this->left = t;
-    this->right = p;
+LookaheadRule::LookaheadRule(Reduction r, std::set<TokenType> la){
+    this->rule = r;
     this->dot_index = 0;
     this->lookahead = la;
 }
@@ -49,17 +48,17 @@ void LookaheadRule::set_lookahead(std::set<TokenType> la){
     this->lookahead = la;
 }
 int DottedRule::right_size()const{
-    return this->right.size();
+    return this->get_right().size();
 }
 std::vector<TokenType> DottedRule::get_remaining(){
     std::vector<TokenType> res;
-    for(int i=this->dot_index + 1;i<this->right.size();i++){
-        res.push_back(this->right.at(i));
+    for(int i=this->dot_index + 1;i<this->right_size();i++){
+        res.push_back(this->get_right_at(i));
     }
     return res;
 }
 DottedRule LookaheadRule::without_lookahead()const{
-    DottedRule res = DottedRule(this->left,this->right);
+    DottedRule res = DottedRule(this->rule);
     res.set_dot(this->dot_index);
     return res;
 }
@@ -67,26 +66,29 @@ std::set<TokenType> LookaheadRule::get_lookahead()const{
     return this->lookahead;
 }
 TokenType DottedRule::get_follow_dotted_symbol()const{
-    if(this->dot_index<this->right.size() - 1){
-        return this->right.at(this->dot_index+1);
+    if(this->dot_index<this->right_size() - 1){
+        return this->get_right().at(this->dot_index+1);
     }
     return TokenType::NoneType;
+}
+Reduction DottedRule::get_reduction()const{
+    return this->rule;
 }
 bool DottedRule::operator<(const DottedRule& other)const{
     if(this->dot_index != other.dot_index){
         return this->dot_index < other.dot_index;
     }
-    if(this->right.size() != other.right.size()){
-        return this->right.size() < other.right.size();
+    if(this->right_size() != other.right_size()){
+        return this->right_size() < other.right_size();
     }
-    int my_left = static_cast<int>(this->left);
-    int other_left = static_cast<int>(other.left);
+    int my_left = static_cast<int>(this->get_left());
+    int other_left = static_cast<int>(other.get_left());
     if(my_left != other_left){
         return my_left < other_left;
     }
-    for(unsigned int i=0; i<this->right.size();i++){
-        my_left = static_cast<int>(this->right.at(i));
-        other_left = static_cast<int>(other.right.at(i));
+    for(unsigned int i=0; i<this->right_size();i++){
+        my_left = static_cast<int>(this->get_right().at(i));
+        other_left = static_cast<int>(other.get_right().at(i));
         if(my_left != other_left){
             return my_left < other_left;
         }
@@ -97,17 +99,17 @@ bool LookaheadRule::operator<(const LookaheadRule& other)const{
     if(this->dot_index != other.dot_index){
         return this->dot_index < other.dot_index;
     }
-    if(this->right.size() != other.right.size()){
-        return this->right.size() < other.right.size();
+    if(this->right_size() != other.right_size()){
+        return this->right_size() < other.right_size();
     }
-    int my_left = static_cast<int>(this->left);
-    int other_left = static_cast<int>(other.left);
+    int my_left = static_cast<int>(this->rule.get_left());
+    int other_left = static_cast<int>(other.rule.get_left());
     if(my_left != other_left){
         return my_left < other_left;
     }
-    for(unsigned int i=0; i<this->right.size();i++){
-        my_left = static_cast<int>(this->right.at(i));
-        other_left = static_cast<int>(other.right.at(i));
+    for(unsigned int i=0; i<this->right_size();i++){
+        my_left = static_cast<int>(this->get_right_at(i));
+        other_left = static_cast<int>(other.get_right_at(i));
         if(my_left != other_left){
             return my_left < other_left;
         }
@@ -118,52 +120,51 @@ bool LookaheadRule::operator<(const LookaheadRule& other)const{
     return this->lookahead<other.lookahead;
 }
 DottedRule::DottedRule(const DottedRule& r){
-    this->left = r.left;
-    this->right = r.right;
+    this->rule = r.rule;
     this->dot_index = r.dot_index;
 }
 TokenType DottedRule::get_dotted_symbol()const{
-    if(this->dot_index == this->right.size()){
+    if(this->dot_index == this->right_size()){
         return TokenType::NoneType;
     }
-    return this->right.at(this->dot_index);
+    return this->get_right().at(this->dot_index);
 }
 DottedRule::~DottedRule(){}
 int DottedRule::get_dot_index(){
     return this->dot_index;
 }
 TokenType DottedRule::get_left()const{
-    return this->left;
+    return this->rule.get_left();
 }
 production DottedRule::get_right()const{
-    return this->right;
+    return this->rule.get_right();
 
 }
 void DottedRule::set_dot(int pos){
     this->dot_index = pos;
 }
 std::ostream& operator<<(std::ostream& os, const DottedRule& r){
-    os<<r.left<<" -> ";
-    for(int i=0; i<r.right.size(); i++){
+    os<<r.get_left()<<" -> ";
+    for(int i=0; i<r.right_size(); i++){
         if(i == r.dot_index){
             os<<". ";
         }
-        os<<r.right.at(i)<<" ";
+        os<<r.get_right().at(i)<<" ";
     }
-    if(r.dot_index == r.right.size()){
+    if(r.dot_index == r.get_right().size()){
         os<<". ";
     }
     return os;
 }
 std::ostream& operator<<(std::ostream& os, const LookaheadRule& r){
-    os<<r.left<<" -> ";
-    for(int i=0; i<r.right.size(); i++){
+    os<<r.get_left()<<" -> ";
+    for(int i=0; i<r.right_size(); i++){
         if(i == r.dot_index){
             os<<". ";
         }
-        os<<r.right.at(i)<<" ";
+        os<<r.get_right().at(i)<<" ";
     }
-    if(r.dot_index == r.right.size()){
+    if(r.dot_index == r.right_size()){
         os<<". ";
     }
     os<<"{";
@@ -180,14 +181,14 @@ bool DottedRule::operator==(const DottedRule& other)const{
     if(this->dot_index != other.dot_index){
         return false;
     }
-    if(this->left != other.left){
+    if(this->get_left() != other.get_left()){
         return false;
     }
-    if(this->right.size() != other.right.size()){
+    if(this->right_size() != other.right_size()){
         return false;
     }
-    for(unsigned int i=0;i<right.size();i++){
-        if(this->right.at(i) != other.right.at(i)){
+    for(unsigned int i=0;i<right_size();i++){
+        if(this->get_right_at(i) != other.get_right_at(i)){
             return false;
         }
     }
@@ -197,21 +198,21 @@ bool LookaheadRule::operator==(const LookaheadRule& other)const{
     if(this->dot_index != other.dot_index){
         return false;
     }
-    if(this->left != other.left){
+    if(this->get_left() != other.get_left()){
         return false;
     }
-    if(this->right.size() != other.right.size()){
+    if(this->right_size() != other.right_size()){
         return false;
     }
-    for(unsigned int i=0;i<right.size();i++){
-        if(this->right.at(i) != other.right.at(i)){
+    for(unsigned int i=0;i<right_size();i++){
+        if(this->get_right_at(i) != other.get_right_at(i)){
             return false;
         }
     }
     return this->lookahead == other.lookahead;
 }
 void DottedRule::move_dot(){
-    if(this->dot_index < this->right.size())
+    if(this->dot_index < this->right_size())
         this->dot_index++;
 }
 
@@ -220,7 +221,7 @@ bool LR1_State::check_final(){
     accept.push_back(TokenType::CODE);
     std::set<TokenType> accept_set;
     accept_set.insert(TokenType::_end);
-    LookaheadRule accepting_item = LookaheadRule(TokenType::START,accept,accept_set);
+    LookaheadRule accepting_item = LookaheadRule(Reduction(TokenType::START,accept),accept_set);
     accepting_item.move_dot();
     for(LookaheadRule r: this->kernel){
         if(r == accepting_item){
@@ -325,9 +326,9 @@ void LR1_State::compute_closure(const Grammar& g){
                 delta_one.merge(g.first(betad));
             }
             productions prods = g.get_productions(current_dotted_tokentype);
-            for(production p_prime: prods){
+            for(Reduction p_prime: prods){
                 // DottedRule dr = DottedRule(current_dotted_tokentype,p_prime,delta_one);
-                DottedRule without_lookahead =  DottedRule(current_dotted_tokentype,p_prime);
+                DottedRule without_lookahead =  DottedRule(p_prime);
                 if(! tmp_closure.contains(without_lookahead)){
                     tmp_closure.insert(
                         std::make_pair(
@@ -416,7 +417,7 @@ LR1_Automaton::LR1_Automaton(const Grammar& g){
     first_production.push_back(TokenType::CODE);
     std::set<TokenType> first_lahead;
     first_lahead.insert(TokenType::_end);
-    first_kernel.insert(LookaheadRule(TokenType::START,first_production,first_lahead));
+    first_kernel.insert(LookaheadRule(Reduction(TokenType::START,first_production),first_lahead));
     LR1_State* s = new LR1_State(first_kernel);
     std::queue<LR1_State*> construction_queue;
     construction_queue.push(s);

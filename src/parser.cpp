@@ -6,7 +6,7 @@ Parser::Parser(const Grammar& g):automaton(g){
 }
 Parser::~Parser(){}
 
-AST* Parser::parse(TokenizedData& token_manager){
+AST* Parser::parse(const Grammar& g, TokenizedData& token_manager){
     // while(token_manager.has_next()){
     //     std::cout<<token_manager.current_token().value()<<std::endl;
     //     token_manager.move_forward();
@@ -52,8 +52,9 @@ AST* Parser::parse(TokenizedData& token_manager){
                 children.at(reduction.get_right().size() - 1 - i) = nodes_stack.top();
                 nodes_stack.pop();
             }
+            Reduction undotted_reduction = reduction.get_reduction();
             symbol_stack.push(Token(reduction.get_left()));
-            nodes_stack.push(new AST(reduction.get_left(),children));
+            nodes_stack.push(new AST(reduction.get_left(),children,g.get_kind_of_reduction(undotted_reduction)));
             LR1_State* tmp = state_stack.top();
             LR1_State* big_t = tmp->get_neighbour(reduction.get_left());
             if(big_t == nullptr){

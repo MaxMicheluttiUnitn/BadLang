@@ -18,13 +18,12 @@ std::ostream& operator<<(std::ostream&, const LookaheadRule&);
 class DottedRule{
     protected:
     int dot_index;
-    TokenType left;
-    production right;
+    Reduction rule;
     public:
     friend std::ostream& operator<<(std::ostream&, const DottedRule&);
     DottedRule();
     DottedRule(const DottedRule&);
-    DottedRule(TokenType,production);
+    DottedRule(Reduction);
     ~DottedRule();
     int get_dot_index();
     TokenType get_dotted_symbol()const;
@@ -32,6 +31,8 @@ class DottedRule{
     TokenType get_left()const;
     std::vector<TokenType> get_remaining();
     production get_right()const;
+    TokenType get_right_at(int id)const;
+    Reduction get_reduction()const;
     void set_dot(int);
     int right_size()const;
     void move_dot();
@@ -53,7 +54,7 @@ class LookaheadRule: DottedRule{
     TokenType get_follow_dotted_symbol()const;
     LookaheadRule(const LookaheadRule&);
     LookaheadRule(const DottedRule&,std::set<TokenType>);
-    LookaheadRule(TokenType,production,std::set<TokenType>);
+    LookaheadRule(Reduction,std::set<TokenType>);
     ~LookaheadRule();
     void set_lookahead(std::set<TokenType>);
     std::set<TokenType> get_lookahead()const;

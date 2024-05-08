@@ -39,7 +39,7 @@ int main(int argc, char* argv[]){
 
     Parser parser(g);
 
-    AST* ast = parser.parse(token_data);
+    AST* ast = parser.parse(g,token_data);
 
     ast->print(std::cout);
 
