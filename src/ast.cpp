@@ -77,7 +77,7 @@ std::string AST::compile_rec(std::set<std::string>& vars, bool rvalue){
         {
             std::string left = this->children[0]->compile_rec(vars, true);
             std::string right = this->children[2]->compile_rec(vars, true);
-            return left + right + "\tpop rdi\n\tpop rax\n\tadd rax, rdi\n\tpush rax\n";
+            return left + right + "\tpop rax\n\tpop rdi\n\tadd rax, rdi\n\tpush rax\n";
         }
         case ReductionKind::MATHOPE__MATHOPE_MINUS_MATHOPT:
         {
@@ -103,7 +103,7 @@ std::string AST::compile_rec(std::set<std::string>& vars, bool rvalue){
         {
             std::string left = this->children[0]->compile_rec(vars, true);
             std::string right = this->children[2]->compile_rec(vars, true);
-            return left + right + "\tpop rdi\n\tpop rax\n\timul rdi\n\tpush rax\n";
+            return left + right + "\tpop rax\n\tpop rdi\n\timul rdi\n\tpush rax\n";
         }
         case ReductionKind::MATHOPF__ITEM:
         {
