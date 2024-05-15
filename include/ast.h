@@ -5,10 +5,13 @@
 #include <iostream>
 #include <string>
 #include <set>
+#include <regex>
 #include <vector>
 #include "reduction_kind.h"
 #include "token.h"
 #include "errors.h"
+
+std::string remove_push_pop(std::string);
 
 class AST{
     Token item;

@@ -173,7 +173,14 @@ std::string AST::compile()
     std::string data_code = this->get_data();
     std::string text_code = this->get_text();
 
+    main_code = remove_push_pop(main_code);
+
     return data_code + bss_code + text_code + main_code;
+}
+
+std::string remove_push_pop(std::string str){
+    std::regex pattern("\tpush rax\n\tpop rax\n");
+    return std::regex_replace(str, pattern, "");
 }
 std::vector<AST *> AST::get_children() const
 {
