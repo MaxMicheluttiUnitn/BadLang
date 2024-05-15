@@ -73,13 +73,13 @@ std::string AST::compile_rec(std::set<std::string>& vars, bool rvalue){
         {
             return this->children[0]->compile_rec(vars, rvalue);
         }
-        case ReductionKind::MATHOPE__MATHOPT_PLUS_MATHOPE:
+        case ReductionKind::MATHOPE__MATHOPE_PLUS_MATHOPT:
         {
             std::string left = this->children[0]->compile_rec(vars, true);
             std::string right = this->children[2]->compile_rec(vars, true);
             return left + right + "\tpop rdi\n\tpop rax\n\tadd rax, rdi\n\tpush rax\n";
         }
-        case ReductionKind::MATHOPE__MATHOPT_MINUS_MATHOPE:
+        case ReductionKind::MATHOPE__MATHOPE_MINUS_MATHOPT:
         {
             std::string left = this->children[0]->compile_rec(vars, true);
             std::string right = this->children[2]->compile_rec(vars, true);
@@ -93,22 +93,22 @@ std::string AST::compile_rec(std::set<std::string>& vars, bool rvalue){
         {
             return this->children[0]->compile_rec(vars, rvalue);
         }
-        case ReductionKind::MATHOPT__MATHOPF_DIV_MATHOPT:
+        case ReductionKind::MATHOPT__MATHOPT_DIV_MATHOPF:
         {
             std::string left = this->children[0]->compile_rec(vars, true);
             std::string right = this->children[2]->compile_rec(vars, true);
             return left + right + "\tpop rdi\n\tpop rax\n\tmov rdx, 0\n\tidiv rdi\n\tpush rax\n";
         }
-        case ReductionKind::MATHOPT__MATHOPF_TIMES_MATHOPT:
+        case ReductionKind::MATHOPT__MATHOPT_TIMES_MATHOPF:
         {
             std::string left = this->children[0]->compile_rec(vars, true);
             std::string right = this->children[2]->compile_rec(vars, true);
-            return left + right + "\tpop rdi\n\tpop rax\n\timul rax\n\tpush rax\n";
+            return left + right + "\tpop rdi\n\tpop rax\n\timul rdi\n\tpush rax\n";
         }
         case ReductionKind::MATHOPF__ITEM:
         {
             std::string item_info = this->children[0]->compile_rec(vars, rvalue);
-            return "\tmov rax, " + item_info + "\n\t push rax\n";
+            return "\tmov rax, " + item_info + "\n\tpush rax\n";
         }
         case ReductionKind::MATHOPF__OPENBRACKETS_MATHOPE_CLOSEBRACKETS:
         {

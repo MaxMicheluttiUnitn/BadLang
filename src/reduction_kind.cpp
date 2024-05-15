@@ -24,15 +24,15 @@ const char* reduction_kind_to_string(ReductionKind kind){
             return "ITEM_NUMBER";
         case ReductionKind::MATHOP__MATHOPE:
             return "MATHOP__MATHOPE";
-        case ReductionKind::MATHOPE__MATHOPT_PLUS_MATHOPE:
+        case ReductionKind::MATHOPE__MATHOPE_PLUS_MATHOPT:
             return "MATHOPE__MATHOPT_PLUS_MATHOPE";
-        case ReductionKind::MATHOPE__MATHOPT_MINUS_MATHOPE:
+        case ReductionKind::MATHOPE__MATHOPE_MINUS_MATHOPT:
             return "MATHOPE__MATHOPT_MINUS_MATHOPE";
         case ReductionKind::MOTHOPE__MATHOPT:
             return "MOTHOPE__MATHOPT";
-        case ReductionKind::MATHOPT__MATHOPF_TIMES_MATHOPT:
+        case ReductionKind::MATHOPT__MATHOPT_TIMES_MATHOPF:
             return "MATHOPT__MATHOPF_TIMES_MATHOPT";
-        case ReductionKind::MATHOPT__MATHOPF_DIV_MATHOPT:
+        case ReductionKind::MATHOPT__MATHOPT_DIV_MATHOPF:
             return "MATHOPT__MATHOPF_DIV_MATHOPT";
         case ReductionKind::MATHOPT__MATHOPF:
             return "MATHOPT__MATHOPF";

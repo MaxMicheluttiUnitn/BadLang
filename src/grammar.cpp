@@ -192,34 +192,34 @@ Grammar Grammar::get_badlang_grammar(){
     right.clear();
     right.push_back(TokenType::MATH_OP_E);
     g.add_rule(Reduction(TokenType::MATH_OP,right),ReductionKind::MATHOP__MATHOPE);
-    // MATH_OP_E -> MATH_OP_T + MATH_OP_E
+    // MATH_OP_E -> MATH_OP_E + MATH_OP_T
     right.clear();
-    right.push_back(TokenType::MATH_OP_T);
+    right.push_back(TokenType::MATH_OP_E);
     right.push_back(TokenType::_plus);
-    right.push_back(TokenType::MATH_OP_E);
-    g.add_rule(Reduction(TokenType::MATH_OP_E,right),ReductionKind::MATHOPE__MATHOPT_PLUS_MATHOPE);
-    // MATH_OP_E -> MATH_OP_T - MATH_OP_E
-    right.clear();
     right.push_back(TokenType::MATH_OP_T);
-    right.push_back(TokenType::_minus);
+    g.add_rule(Reduction(TokenType::MATH_OP_E,right),ReductionKind::MATHOPE__MATHOPE_PLUS_MATHOPT);
+    // MATH_OP_E -> MATH_OP_E - MATH_OP_T
+    right.clear();
     right.push_back(TokenType::MATH_OP_E);
-    g.add_rule(Reduction(TokenType::MATH_OP_E,right),ReductionKind::MATHOPE__MATHOPT_MINUS_MATHOPE);
+    right.push_back(TokenType::_minus);
+    right.push_back(TokenType::MATH_OP_T);
+    g.add_rule(Reduction(TokenType::MATH_OP_E,right),ReductionKind::MATHOPE__MATHOPE_MINUS_MATHOPT);
     // MATH_OP_E -> MATH_OP_T
     right.clear();
     right.push_back(TokenType::MATH_OP_T);
     g.add_rule(Reduction(TokenType::MATH_OP_E,right),ReductionKind::MOTHOPE__MATHOPT);
-    // MATH_OP_T -> MATH_OP_F * MATH_OP_T
+    // MATH_OP_T -> MATH_OP_T * MATH_OP_F
     right.clear();
-    right.push_back(TokenType::MATH_OP_F);
+    right.push_back(TokenType::MATH_OP_T);
     right.push_back(TokenType::_times);
-    right.push_back(TokenType::MATH_OP_T);
-    g.add_rule(Reduction(TokenType::MATH_OP_T,right),ReductionKind::MATHOPT__MATHOPF_TIMES_MATHOPT);
-    // MATH_OP_T -> MATH_OP_F / MATH_OP_T
-    right.clear();
     right.push_back(TokenType::MATH_OP_F);
-    right.push_back(TokenType::_divide);
+    g.add_rule(Reduction(TokenType::MATH_OP_T,right),ReductionKind::MATHOPT__MATHOPT_TIMES_MATHOPF);
+    // MATH_OP_T -> MATH_OP_T / MATH_OP_F
+    right.clear();
     right.push_back(TokenType::MATH_OP_T);
-    g.add_rule(Reduction(TokenType::MATH_OP_T,right),ReductionKind::MATHOPT__MATHOPF_DIV_MATHOPT);
+    right.push_back(TokenType::_divide);
+    right.push_back(TokenType::MATH_OP_F);
+    g.add_rule(Reduction(TokenType::MATH_OP_T,right),ReductionKind::MATHOPT__MATHOPT_DIV_MATHOPF);
     // MATH_OP_T -> MATH_OP_F
     right.clear();
     right.push_back(TokenType::MATH_OP_F);
