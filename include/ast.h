@@ -10,6 +10,7 @@
 #include "reduction_kind.h"
 #include "token.h"
 #include "errors.h"
+#include "label_generator.h"
 
 std::string remove_push_pop(std::string);
 
@@ -18,7 +19,7 @@ class AST{
     ReductionKind reduction_kind;
     std::vector<AST*> children;
     void print_depth(std::ostream&,int)const;
-    std::string compile_rec(std::set<std::string>&, bool lvalue);
+    std::string compile_rec(std::set<std::string>&, Labelgenerator&, bool);
     std::string get_bss(const std::set<std::string>&);
     std::string get_text();
     std::string get_data();

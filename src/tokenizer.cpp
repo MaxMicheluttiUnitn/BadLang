@@ -130,6 +130,14 @@ std::vector<Token> TokenizedData::tokenize(const std::string& data){
             tokens.push_back(Token(TokenType::_close_brackets));
             continue;
         }
+        if(current_char == '{'){
+            tokens.push_back(Token(TokenType::_open_curly));
+            continue;
+        }
+        if(current_char == '}'){
+            tokens.push_back(Token(TokenType::_close_curly));
+            continue;
+        }
         if(current_char == '+'){
             tokens.push_back(Token(TokenType::_plus));
             continue;

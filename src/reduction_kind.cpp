@@ -42,6 +42,16 @@ const char* reduction_kind_to_string(ReductionKind kind){
             return "MATHOPF__OPENBRACKETS_MATHOPE_CLOSEBRACKETS";
         case ReductionKind::MATHOPF__ITEM:
             return "MATHOPF__ITEM";
+        case ReductionKind::CONDITIONAL__IF_OPEN_MATHOP_CLOSE_BLOCK:
+            return "STATEMENT__IF_OPEN_MATHOP_CLOSE_BLOCK";
+        case ReductionKind::CONDITIONAL__IF_OPEN_MATHOP_CLOSE_BLOCK_ELSE_BLOCK:
+            return "STATEMENT__IF_OPEN_MATHOP_CLOSE_BLOCK_ELSE_BLOCK";
+        case ReductionKind::BLOCK__OPENCURLY_CODE_CLOSECURLY:
+            return "BLOCK__OPENCURLY_CODE_CLOSECURLY";
+        case ReductionKind::CODE__CONDITIONAL: 
+            return "CODE__CONDITIONAL";
+        case ReductionKind::CODE__CONDITIONAL_CODE:
+            return "CODE__CONDITIONAL_CODE";
     }
     return "ERROR: UNKNOWN REDUCTION KIND";
 }

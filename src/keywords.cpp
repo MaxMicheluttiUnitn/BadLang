@@ -5,8 +5,8 @@ Keywords::Keywords(){
     this->items.insert(std::make_pair(std::string("return"),Token(TokenType::_return)));
     // this->items.insert(std::make_pair(std::string("for"),Token(TokenType::_for)));
     // this->items.insert(std::make_pair(std::string("while"),Token(TokenType::_while)));
-    // this->items.insert(std::make_pair(std::string("if"),Token(TokenType::_if)));
-    // this->items.insert(std::make_pair(std::string("else"),Token(TokenType::_else)));
+    this->items.insert(std::make_pair(std::string("if"),Token(TokenType::_if)));
+    this->items.insert(std::make_pair(std::string("else"),Token(TokenType::_else)));
     // this->items.insert(std::make_pair(std::string("elif"),Token(TokenType::_elif)));
 }
 Keywords::~Keywords(){}

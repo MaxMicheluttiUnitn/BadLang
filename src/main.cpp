@@ -30,7 +30,8 @@ int main(int argc, char* argv[]){
     TokenizedData token_data(raw_data);
 
     // while(token_data.has_next()){
-    //     std::cout<<token_data.next_token().value_or(Token())<<std::endl;
+    //     std::cout<<token_data.current_token().value_or(Token())<<std::endl;
+    //     token_data.move_forward();
     // }
 
     Grammar g = Grammar::get_badlang_grammar();
@@ -61,6 +62,6 @@ int main(int argc, char* argv[]){
         exit(EXIT_FAILURE);
     }
 
-    return EXIT_SUCCESS;   
+    return EXIT_SUCCESS;
 }
 

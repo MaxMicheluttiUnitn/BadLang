@@ -31,8 +31,8 @@ std::ostream & operator<<(std::ostream & os, const TokenType& type){
         case TokenType::_while: os<<"_while";break;
         case TokenType::int_literal: os<<"int_literal";break;
         case TokenType::semicolon: os<<"semicolon";break;
-        case TokenType::_close_brackets: os<<"_closed brackets";break;
-        case TokenType::_open_brackets: os<<"_opened brackets";break;
+        case TokenType::_close_brackets: os<<"_closed_brackets";break;
+        case TokenType::_open_brackets: os<<"_opened_brackets";break;
         case TokenType::START: os<<"START SYMBOL";break;
         case TokenType::STATEMENT: os<<"STATEMENT";break;
         case TokenType::CODE: os<<"CODE";break;
@@ -44,6 +44,10 @@ std::ostream & operator<<(std::ostream & os, const TokenType& type){
         case TokenType::RETURN: os<<"RETURN";break;
         case TokenType::ITEM: os<<"ITEM";break;
         case TokenType::_end: os<<"$";break;
+        case TokenType::BLOCK: os<<"BLOCK";break;
+        case TokenType::_open_curly: os<<"_open_curly";break;
+        case TokenType::_close_curly: os<<"_close_curly";break;
+        case TokenType::CONDITIONAL: os<<"CONDITIONAL";break;
         default: 
         case TokenType::NoneType:os<<"error_token";break;
     }
@@ -61,6 +65,8 @@ bool tokentype_is_literal(const TokenType& t){
         case TokenType::EQUALITY:
         case TokenType::RETURN:
         case TokenType::ITEM: 
+        case TokenType::BLOCK:
+        case TokenType::CONDITIONAL:
         case TokenType::NoneType: return false;
         default: return true;
     }
@@ -76,6 +82,8 @@ bool tokentype_is_production_symbol(const TokenType& t){
         case TokenType::MATH_OP_T:
         case TokenType::EQUALITY:
         case TokenType::RETURN:
+        case TokenType::BLOCK:
+        case TokenType::CONDITIONAL:
         case TokenType::ITEM: return true;
         default: return false;
     }

@@ -17,6 +17,8 @@ enum class TokenType{
     MATH_OP_T,
     MATH_OP_F,
     ITEM,
+    BLOCK,
+    CONDITIONAL,
     _return,
     _if,
     _else,
@@ -32,7 +34,9 @@ enum class TokenType{
     _times,
     _divide,
     _open_brackets,
-    _close_brackets
+    _close_brackets,
+    _open_curly,
+    _close_curly
 };
 
 class Token;

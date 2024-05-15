@@ -320,10 +320,12 @@ void LR1_State::compute_closure(const Grammar& g){
         if(tokentype_is_production_symbol(current_dotted_tokentype)){
             std::set<TokenType> delta_one = std::set<TokenType>();
             std::vector<TokenType> remaining = item.get_remaining();
-            for(TokenType t: tmp_closure.at(item).first ){
+            std::set<TokenType> items = tmp_closure.at(item).first;
+            for(TokenType t: items ){
                 std::vector<TokenType> betad = std::vector<TokenType>(remaining);
                 betad.push_back(t);
-                delta_one.merge(g.first(betad));
+                std::set<TokenType> first_beta_d = g.first(betad);
+                delta_one.merge(first_beta_d);
             }
             productions prods = g.get_productions(current_dotted_tokentype);
             for(Reduction p_prime: prods){

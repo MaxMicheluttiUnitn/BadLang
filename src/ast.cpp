@@ -27,97 +27,121 @@ TokenType AST::get_type()const{
     return this->item.type;
 }
 
-std::string AST::compile_rec(std::set<std::string>& vars, bool rvalue){
+std::string AST::compile_rec(std::set<std::string>& vars, Labelgenerator& label_gen, bool rvalue){
     switch (this->reduction_kind)
     {
         case ReductionKind::START__CODE:
         {
-            return this->children[0]->compile_rec(vars,false);
+            return this->children[0]->compile_rec(vars, label_gen, false);
         }
         case ReductionKind::CODE__STATEMENT:
         {
-            return this->children[0]->compile_rec(vars, false);
+            return this->children[0]->compile_rec(vars, label_gen, false);
         }
         case ReductionKind::CODE__STATEMENT_SEMI_CODE:
         {
-            std::string left = this->children[0]->compile_rec(vars, false);
-            return left + this->children[2]->compile_rec(vars, false);
+            std::string left = this->children[0]->compile_rec(vars, label_gen, false);
+            return left + this->children[2]->compile_rec(vars, label_gen, false);
         }
         case ReductionKind::STATEMENT__EQUALITY:
         {
-            return this->children[0]->compile_rec(vars, rvalue);
+            return this->children[0]->compile_rec(vars, label_gen, rvalue);
         }
         case ReductionKind::STATEMENT__RETURN:
         {
-            return this->children[0]->compile_rec(vars, rvalue);
+            return this->children[0]->compile_rec(vars, label_gen, rvalue);
         }
         case ReductionKind::RETURN__RET_ITEM:
         {
-            return "\tmov rdi, " + this->children[1]->compile_rec(vars, true) + "\n\tmov rax, 60\n\tsyscall\n";
+            return "\tmov rdi, " + this->children[1]->compile_rec(vars, label_gen, true) + "\n\tmov rax, 60\n\tsyscall\n";
         }
         case ReductionKind::ITEM__NAME:
         {
-            return this->children[0]->compile_rec(vars, rvalue);
+            return this->children[0]->compile_rec(vars, label_gen, rvalue);
         }
         case ReductionKind::ITEM__NUMBER:
         {
-            return this->children[0]->compile_rec(vars, false);
+            return this->children[0]->compile_rec(vars, label_gen, false);
         }
         case ReductionKind::EQUALITY__NAME_EQ_MATHOP:
         {
-            std::string value = this->children[2]->compile_rec(vars, true);
-            std::string var = this->children[0]->compile_rec(vars, false);
+            std::string value = this->children[2]->compile_rec(vars, label_gen, true);
+            std::string var = this->children[0]->compile_rec(vars, label_gen, false);
             return value + "\tpop rax\n\tmov " + var + ", rax\n";
         }
         case ReductionKind::MATHOP__MATHOPE:
         {
-            return this->children[0]->compile_rec(vars, rvalue);
+            return this->children[0]->compile_rec(vars, label_gen, rvalue);
         }
         case ReductionKind::MATHOPE__MATHOPE_PLUS_MATHOPT:
         {
-            std::string left = this->children[0]->compile_rec(vars, true);
-            std::string right = this->children[2]->compile_rec(vars, true);
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
             return left + right + "\tpop rax\n\tpop rdi\n\tadd rax, rdi\n\tpush rax\n";
         }
         case ReductionKind::MATHOPE__MATHOPE_MINUS_MATHOPT:
         {
-            std::string left = this->children[0]->compile_rec(vars, true);
-            std::string right = this->children[2]->compile_rec(vars, true);
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
             return left + right + "\tpop rdi\n\tpop rax\n\tsub rax, rdi\n\tpush rax\n";
         }
         case ReductionKind::MOTHOPE__MATHOPT:
         {
-            return this->children[0]->compile_rec(vars, rvalue);
+            return this->children[0]->compile_rec(vars, label_gen, rvalue);
         }   
         case ReductionKind::MATHOPT__MATHOPF:
         {
-            return this->children[0]->compile_rec(vars, rvalue);
+            return this->children[0]->compile_rec(vars, label_gen, rvalue);
         }
         case ReductionKind::MATHOPT__MATHOPT_DIV_MATHOPF:
         {
-            std::string left = this->children[0]->compile_rec(vars, true);
-            std::string right = this->children[2]->compile_rec(vars, true);
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
             return left + right + "\tpop rdi\n\tpop rax\n\tmov rdx, 0\n\tidiv rdi\n\tpush rax\n";
         }
         case ReductionKind::MATHOPT__MATHOPT_TIMES_MATHOPF:
         {
-            std::string left = this->children[0]->compile_rec(vars, true);
-            std::string right = this->children[2]->compile_rec(vars, true);
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
             return left + right + "\tpop rax\n\tpop rdi\n\timul rdi\n\tpush rax\n";
         }
         case ReductionKind::MATHOPF__ITEM:
         {
-            std::string item_info = this->children[0]->compile_rec(vars, rvalue);
+            std::string item_info = this->children[0]->compile_rec(vars, label_gen, rvalue);
             return "\tmov rax, " + item_info + "\n\tpush rax\n";
         }
         case ReductionKind::MATHOPF__OPENBRACKETS_MATHOPE_CLOSEBRACKETS:
         {
-            return this->children[1]->compile_rec(vars, rvalue);
+            return this->children[1]->compile_rec(vars, label_gen, rvalue);
         }
         case ReductionKind::MATHOPF__MINUS_MATHOPF:
         {
-            std::string item_info = this->children[1]->compile_rec(vars, rvalue);
+            std::string item_info = this->children[1]->compile_rec(vars, label_gen, rvalue);
             return item_info + "\tpop rax\n\tneg rax\n\tpush rax\n";
+        }
+        case ReductionKind::BLOCK__OPENCURLY_CODE_CLOSECURLY:
+        {
+            return this->children[1]->compile_rec(vars, label_gen, rvalue);
+        }
+        case ReductionKind::CONDITIONAL__IF_OPEN_MATHOP_CLOSE_BLOCK:
+        {
+            std::string condition = this->children[1]->compile_rec(vars, label_gen, true);
+            std::string block = this->children[3]->compile_rec(vars, label_gen, rvalue);
+            std::string label = label_gen.get_label();
+            return condition + "\tpop rax\n\tcmp rax, 0\n\tje " + label + "\n" + block + label + ":\n";
+        }
+        case ReductionKind::CONDITIONAL__IF_OPEN_MATHOP_CLOSE_BLOCK_ELSE_BLOCK:
+        {
+            std::string condition = this->children[2]->compile_rec(vars, label_gen, true);
+            std::string block = this->children[4]->compile_rec(vars, label_gen, rvalue);
+            std::string else_block = this->children[6]->compile_rec(vars, label_gen, rvalue);
+            std::string label = label_gen.get_label();
+            std::string label2 = label_gen.get_label();
+            return condition + "\tpop rax\n\tcmp rax, 0\n\tje " + label + "\n" + block + "\tjmp " + label2 + "\n" + label + ":\n" + else_block + label2 + ":\n";
+        }
+        case ReductionKind::CODE__CONDITIONAL:
+        {
+            return this->children[0]->compile_rec(vars, label_gen, rvalue);
         }
         case ReductionKind::NOT_A_REDUCTION:
             {
@@ -168,7 +192,8 @@ std::string AST::get_bss(const std::set<std::string>& vars){
 std::string AST::compile()
 {
     std::set<std::string> defined_variables = std::set<std::string>();
-    std::string main_code = "_start:\n" + this->compile_rec(defined_variables,false);
+    Labelgenerator label_gen = Labelgenerator();
+    std::string main_code = "_start:\n" + this->compile_rec(defined_variables,label_gen,false);
     std::string bss_code = this->get_bss(defined_variables);
     std::string data_code = this->get_data();
     std::string text_code = this->get_text();

@@ -105,14 +105,21 @@ ReductionKind Grammar::get_kind_of_reduction(const Reduction& r)const{
 Reduction Grammar::get_reduction_of_kind(ReductionKind i)const{
     return this->id_to_rule.at(i);
 }
+
 std::set<TokenType> Grammar::first(const std::vector<TokenType>& word)const{
+    // for(TokenType t: word){
+    //     std::cout<<t<<std::endl;
+    // }
+    // std::cout<<"---"<<std::endl;
+    // std::cout.flush();
     std::set<TokenType> res = std::set<TokenType>();
     if(word.size()==0){
         res.insert(TokenType::NoneType);
         return res;
     }else if(word.size()==1){
-        TokenType left = word.at(0);
+        TokenType left = TokenType(word.at(0));
         if(tokentype_is_literal(left)){
+            //std::cout<<"literal"<<std::endl;
             res.insert(left);
             return res;
         }else{
@@ -120,6 +127,7 @@ std::set<TokenType> Grammar::first(const std::vector<TokenType>& word)const{
             for(Reduction p: prods){
                 res.merge(this->first(p.get_right()));
             }
+            return res;
         }
     }else{
         int j=0;
@@ -169,6 +177,39 @@ Grammar Grammar::get_badlang_grammar(){
     right.clear();
     right.push_back(TokenType::RETURN);
     g.add_rule(Reduction(TokenType::STATEMENT,right),ReductionKind::STATEMENT__RETURN);
+    // CODE -> CONDITIONAL
+    right.clear();
+    right.push_back(TokenType::CONDITIONAL);
+    g.add_rule(Reduction(TokenType::CODE,right),ReductionKind::CODE__CONDITIONAL);
+    // CODE -> CONDITIONAL CODE
+    right.clear();
+    right.push_back(TokenType::CONDITIONAL);
+    right.push_back(TokenType::CODE);
+    g.add_rule(Reduction(TokenType::CODE,right),ReductionKind::CODE__CONDITIONAL_CODE);
+    // CONDITIONAL -> _if ( MATH_OP ) BLOCK
+    right.clear();
+    right.push_back(TokenType::_if);
+    right.push_back(TokenType::_open_brackets);
+    right.push_back(TokenType::MATH_OP);
+    right.push_back(TokenType::_close_brackets);
+    right.push_back(TokenType::BLOCK);
+    g.add_rule(Reduction(TokenType::CONDITIONAL,right),ReductionKind::CONDITIONAL__IF_OPEN_MATHOP_CLOSE_BLOCK);
+    // CONDITIONAL -> _if ( MATH_OP ) BLOCK _else BLOCK
+    right.clear();
+    right.push_back(TokenType::_if);
+    right.push_back(TokenType::_open_brackets);
+    right.push_back(TokenType::MATH_OP);
+    right.push_back(TokenType::_close_brackets);
+    right.push_back(TokenType::BLOCK);
+    right.push_back(TokenType::_else);
+    right.push_back(TokenType::BLOCK);
+    g.add_rule(Reduction(TokenType::CONDITIONAL,right),ReductionKind::CONDITIONAL__IF_OPEN_MATHOP_CLOSE_BLOCK_ELSE_BLOCK);
+    // BLOCK -> _open_curly CODE _close_curly
+    right.clear();
+    right.push_back(TokenType::_open_curly);
+    right.push_back(TokenType::CODE);
+    right.push_back(TokenType::_close_curly);
+    g.add_rule(Reduction(TokenType::BLOCK,right),ReductionKind::BLOCK__OPENCURLY_CODE_CLOSECURLY);
     // EQUALITY -> NAME = MATH_OP
     right.clear();
     right.push_back(TokenType::name);
