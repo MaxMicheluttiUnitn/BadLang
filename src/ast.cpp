@@ -114,6 +114,11 @@ std::string AST::compile_rec(std::set<std::string>& vars, bool rvalue){
         {
             return this->children[1]->compile_rec(vars, rvalue);
         }
+        case ReductionKind::MATHOPF__MINUS_MATHOPF:
+        {
+            std::string item_info = this->children[1]->compile_rec(vars, rvalue);
+            return item_info + "\tpop rax\n\tneg rax\n\tpush rax\n";
+        }
         case ReductionKind::NOT_A_REDUCTION:
             {
                 if(this->item.type == TokenType::name){
