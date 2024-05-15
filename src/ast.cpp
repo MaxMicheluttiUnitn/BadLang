@@ -43,6 +43,12 @@ std::string AST::compile_rec(std::set<std::string>& vars, Labelgenerator& label_
             std::string left = this->children[0]->compile_rec(vars, label_gen, false);
             return left + this->children[2]->compile_rec(vars, label_gen, false);
         }
+        case ReductionKind::CODE__CONDITIONAL_CODE:
+        {
+            std::string left = this->children[0]->compile_rec(vars, label_gen, false);
+            std::string right = this->children[1]->compile_rec(vars, label_gen, false);
+            return left + right;
+        }
         case ReductionKind::STATEMENT__EQUALITY:
         {
             return this->children[0]->compile_rec(vars, label_gen, rvalue);
@@ -136,6 +142,15 @@ std::string AST::compile_rec(std::set<std::string>& vars, Labelgenerator& label_
             std::string label = label_gen.get_label();
             return condition + "\tpop rax\n\tcmp rax, 0\n\tje " + label + "\n" + block + label + ":\n";
         }
+        case ReductionKind::CONDITIONAL__WHILE_OPEN_MATHOP_CLOSE_BLOCK:
+        {
+            std::string condition = this->children[2]->compile_rec(vars, label_gen, true);
+            std::string block = this->children[4]->compile_rec(vars, label_gen, rvalue);
+            std::string entry_label = label_gen.get_label();
+            std::string exit_label = label_gen.get_label();
+            return entry_label + ":\n" + condition + "\tpop rax\n\tcmp rax, 0\n\tje " + 
+                exit_label + "\n" + block + "\tjmp "+entry_label+"\n" + exit_label + ":\n";
+        }
         case ReductionKind::CONDITIONAL__IF_OPEN_MATHOP_CLOSE_BLOCK_ELSE_BLOCK:
         {
             std::string condition = this->children[2]->compile_rec(vars, label_gen, true);
@@ -171,6 +186,7 @@ std::string AST::compile_rec(std::set<std::string>& vars, Labelgenerator& label_
                 }
             }
         default:
+            std::cout<<"ERROR: "<<this->reduction_kind<<std::endl;
             errors::print_error("Unknown reduction kind");
             exit(EXIT_FAILURE);
     }

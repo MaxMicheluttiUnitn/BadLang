@@ -298,6 +298,14 @@ Grammar Grammar::get_badlang_grammar(){
     right.clear();
     right.push_back(TokenType::ITEM);
     g.add_rule(Reduction(TokenType::MATH_OP_F,right),ReductionKind::MATHOPF__ITEM);
-
+    // CONDITIONAL -> WHILE ( MATH_OP ) BLOCK
+    right.clear();
+    right.push_back(TokenType::_while);
+    right.push_back(TokenType::_open_brackets);
+    right.push_back(TokenType::MATH_OP);
+    right.push_back(TokenType::_close_brackets);
+    right.push_back(TokenType::BLOCK);
+    g.add_rule(Reduction(TokenType::CONDITIONAL,right),ReductionKind::CONDITIONAL__WHILE_OPEN_MATHOP_CLOSE_BLOCK);
+    
     return g;
 }

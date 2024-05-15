@@ -6,4 +6,7 @@ c = c +1;}
 else{
 a = a + 1;
 }
+while(c){
+    c = c - 1;
+}
 return c;
