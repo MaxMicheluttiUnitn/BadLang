@@ -261,6 +261,12 @@ Grammar Grammar::get_badlang_grammar(){
     right.push_back(TokenType::_divide);
     right.push_back(TokenType::MATH_OP_F);
     g.add_rule(Reduction(TokenType::MATH_OP_T,right),ReductionKind::MATHOPT__MATHOPT_DIV_MATHOPF);
+    // MATH_OP_T -> MATH_OP_T % MATH_OP_F
+    right.clear();
+    right.push_back(TokenType::MATH_OP_T);
+    right.push_back(TokenType::_modulus);
+    right.push_back(TokenType::MATH_OP_F);
+    g.add_rule(Reduction(TokenType::MATH_OP_T,right),ReductionKind::MATHOPT__MATHOPT_MOD_MATHOPF);
     // MATH_OP_T -> MATH_OP_F
     right.clear();
     right.push_back(TokenType::MATH_OP_F);

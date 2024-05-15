@@ -48,6 +48,7 @@ std::ostream & operator<<(std::ostream & os, const TokenType& type){
         case TokenType::_open_curly: os<<"_open_curly";break;
         case TokenType::_close_curly: os<<"_close_curly";break;
         case TokenType::CONDITIONAL: os<<"CONDITIONAL";break;
+        case TokenType::_modulus: os<<"_modulus";break;
         default: 
         case TokenType::NoneType:os<<"error_token";break;
     }

@@ -52,6 +52,8 @@ const char* reduction_kind_to_string(ReductionKind kind){
             return "CODE__CONDITIONAL";
         case ReductionKind::CODE__CONDITIONAL_CODE:
             return "CODE__CONDITIONAL_CODE";
+        case ReductionKind::MATHOPT__MATHOPT_MOD_MATHOPF:
+            return "MATHOPT__MATHOPT_MOD_MATHOPF";
     }
     return "ERROR: UNKNOWN REDUCTION KIND";
 }

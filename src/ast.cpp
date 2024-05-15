@@ -99,6 +99,12 @@ std::string AST::compile_rec(std::set<std::string>& vars, Labelgenerator& label_
             std::string right = this->children[2]->compile_rec(vars, label_gen, true);
             return left + right + "\tpop rdi\n\tpop rax\n\tmov rdx, 0\n\tidiv rdi\n\tpush rax\n";
         }
+        case ReductionKind::MATHOPT__MATHOPT_MOD_MATHOPF:
+        {
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
+            return left + right + "\tpop rdi\n\tpop rax\n\tmov rdx, 0\n\tidiv rdi\n\tpush rdx\n";
+        }
         case ReductionKind::MATHOPT__MATHOPT_TIMES_MATHOPF:
         {
             std::string left = this->children[0]->compile_rec(vars, label_gen, true);

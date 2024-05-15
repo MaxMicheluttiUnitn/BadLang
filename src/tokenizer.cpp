@@ -150,6 +150,10 @@ std::vector<Token> TokenizedData::tokenize(const std::string& data){
             tokens.push_back(Token(TokenType::_times));
             continue;
         }
+        if(current_char == '%'){
+            tokens.push_back(Token(TokenType::_modulus));
+            continue;
+        }
         if(current_char == '/'){
             tokens.push_back(Token(TokenType::_divide));
             continue;

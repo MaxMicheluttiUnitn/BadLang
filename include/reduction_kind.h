@@ -29,6 +29,7 @@ enum class ReductionKind{
     BLOCK__OPENCURLY_CODE_CLOSECURLY,
     CODE__CONDITIONAL,
     CODE__CONDITIONAL_CODE,
+    MATHOPT__MATHOPT_MOD_MATHOPF
 };
 
 // for each reduction kind, print its name

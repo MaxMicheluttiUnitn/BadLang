@@ -33,6 +33,7 @@ enum class TokenType{
     _minus,
     _times,
     _divide,
+    _modulus,
     _open_brackets,
     _close_brackets,
     _open_curly,
