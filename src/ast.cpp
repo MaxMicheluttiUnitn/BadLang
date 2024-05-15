@@ -127,6 +127,7 @@ std::string AST::compile_rec(std::set<std::string>& vars, bool rvalue){
                     }else{
                         if(vars.find(this->item.value.value()) == vars.end()){
                             errors::print_error("variable "+this->item.value.value()+" not defined");
+                            exit(EXIT_FAILURE);
                         }
                     }
                     return "[var_" + this->item.value.value()+"]";
@@ -141,7 +142,7 @@ std::string AST::compile_rec(std::set<std::string>& vars, bool rvalue){
             }
         default:
             errors::print_error("Unknown reduction kind");
-            return std::string();
+            exit(EXIT_FAILURE);
     }
 }
 
