@@ -41,11 +41,25 @@ int main(int argc, char* argv[]){
 
     AST* ast = parser.parse(g,token_data);
 
-    ast->print(std::cout);
+    //ast->print(std::cout);
+
+    std::string code = ast->compile();
+
+    std::ofstream out("tmp.asm");
+    out<<code;    
+    out.close();
 
     // ASSMBLE AND LINK WITH NASM AND LD
-    // system("nasm -f elf64 -g tmp.asm");
-    // system("ld -g tmp.o -o a.out");
+    int res = system("nasm -f elf64 -g tmp.asm");
+    if(res != 0){
+        errors::print_error("nasm failed");
+        exit(EXIT_FAILURE);
+    }
+    res = system("ld -g tmp.o -o a.out");
+    if(res != 0){
+        errors::print_error("ld failed");
+        exit(EXIT_FAILURE);
+    }
 
     return EXIT_SUCCESS;   
 }

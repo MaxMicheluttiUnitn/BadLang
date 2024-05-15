@@ -187,7 +187,7 @@ Grammar Grammar::get_badlang_grammar(){
     // ITEM -> NUMBER
     right.clear();
     right.push_back(TokenType::int_literal);
-    g.add_rule(Reduction(TokenType::ITEM,right),ReductionKind::ITEM_NUMBER);
+    g.add_rule(Reduction(TokenType::ITEM,right),ReductionKind::ITEM__NUMBER);
     // MATH_OP -> MATH_OP_E
     right.clear();
     right.push_back(TokenType::MATH_OP_E);

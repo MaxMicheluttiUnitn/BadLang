@@ -20,7 +20,7 @@ const char* reduction_kind_to_string(ReductionKind kind){
             return "RETURN__RET_ITEM";
         case ReductionKind::ITEM__NAME:
             return "ITEM__NAME";
-        case ReductionKind::ITEM_NUMBER:
+        case ReductionKind::ITEM__NUMBER:
             return "ITEM_NUMBER";
         case ReductionKind::MATHOP__MATHOPE:
             return "MATHOP__MATHOPE";
