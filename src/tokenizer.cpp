@@ -119,8 +119,18 @@ std::vector<Token> TokenizedData::tokenize(const std::string& data){
             continue;
         }
         if(current_char == '='){
-            tokens.push_back(Token(TokenType::_equals));
-            continue;
+            i++;
+            if(i == data.length()){
+                tokens.push_back(Token(TokenType::_equals));
+                continue;
+            }else if(data.at(i) == '='){
+                tokens.push_back(Token(TokenType::_equal_equal));
+                continue;
+            }else{
+                i--;
+                tokens.push_back(Token(TokenType::_equals));
+                continue;
+            }
         }
         if(current_char == '('){
             tokens.push_back(Token(TokenType::_open_brackets));
@@ -154,7 +164,82 @@ std::vector<Token> TokenizedData::tokenize(const std::string& data){
             tokens.push_back(Token(TokenType::_modulus));
             continue;
         }
+        if(current_char == '&'){
+            i++;
+            if(i == data.length()){
+                tokens.push_back(Token(TokenType::_bitwise_and));
+                continue;
+            }else if(data.at(i) == '&'){
+                tokens.push_back(Token(TokenType::_and));
+                continue;
+            }else{
+                i--;
+                tokens.push_back(Token(TokenType::_bitwise_and));
+                continue;
+            }
+        }
+        if(current_char == '|'){
+            i++;
+            if(i == data.length()){
+                tokens.push_back(Token(TokenType::_bitwise_or));
+                continue;
+            }else if(data.at(i) == '|'){
+                tokens.push_back(Token(TokenType::_or));
+                continue;
+            }else{
+                i--;
+                tokens.push_back(Token(TokenType::_bitwise_or));
+                continue;
+            }
+        }
+        if(current_char == '~'){
+            tokens.push_back(Token(TokenType::_tilde));
+            continue;
+        }
+        if(current_char == '!'){
+            i++;
+            if(i == data.length()){
+                tokens.push_back(Token(TokenType::_not));
+                continue;
+            }else if(data.at(i) == '='){
+                tokens.push_back(Token(TokenType::_not_equal));
+                continue;
+            }else{
+                i--;
+                tokens.push_back(Token(TokenType::_not));
+                continue;
+            }
+        }
+        if(current_char == '>'){
+            i++;
+            if(i == data.length()){
+                tokens.push_back(Token(TokenType::_gt));
+                continue;
+            }else if(data.at(i) == '='){
+                tokens.push_back(Token(TokenType::_gt_eq));
+                continue;
+            }else{
+                i--;
+                tokens.push_back(Token(TokenType::_gt));
+                continue;
+            }
+        }
+        if(current_char == '<'){
+            i++;
+            if(i == data.length()){
+                tokens.push_back(Token(TokenType::_lt));
+                continue;
+            }else if(data.at(i) == '='){
+                tokens.push_back(Token(TokenType::_lt_eq));
+                continue;
+            }else{
+                i--;
+                tokens.push_back(Token(TokenType::_lt));
+                continue;
+            }
+        }
         if(current_char == '/'){
+            // can be comment or division
             i++;
             if(i == data.length()){
                 tokens.push_back(Token(TokenType::_divide));
@@ -169,10 +254,14 @@ std::vector<Token> TokenizedData::tokenize(const std::string& data){
                     if(i == data.length()){break;}
                     current_char = data.at(i);
                 }
+                i--;
+                continue;
+            }else{
+                // this is a divide
+                tokens.push_back(Token(TokenType::_divide));
+                i--;
                 continue;
             }
-            i--;
-            continue;
         }
         // SKIP EMPTYSPACE
         if(current_char == ' ' || current_char == '\n' || current_char == '\r' || current_char == '\t'){

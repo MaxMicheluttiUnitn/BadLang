@@ -57,9 +57,10 @@ std::string AST::compile_rec(std::set<std::string>& vars, Labelgenerator& label_
         {
             return this->children[0]->compile_rec(vars, label_gen, rvalue);
         }
-        case ReductionKind::RETURN__RET_ITEM:
+        case ReductionKind::RETURN__RET_OP:
         {
-            return "\tmov rdi, " + this->children[1]->compile_rec(vars, label_gen, true) + "\n\tmov rax, 60\n\tsyscall\n";
+            std::string code = this->children[1]->compile_rec(vars, label_gen, true);
+            return code + "\tpop rdi\n\tmov rax, 60\n\tsyscall\n";
         }
         case ReductionKind::ITEM__NAME:
         {
@@ -69,15 +70,84 @@ std::string AST::compile_rec(std::set<std::string>& vars, Labelgenerator& label_
         {
             return this->children[0]->compile_rec(vars, label_gen, false);
         }
-        case ReductionKind::EQUALITY__NAME_EQ_MATHOP:
+        case ReductionKind::EQUALITY__NAME_EQ_OP:
         {
             std::string value = this->children[2]->compile_rec(vars, label_gen, true);
             std::string var = this->children[0]->compile_rec(vars, label_gen, false);
             return value + "\tpop rax\n\tmov " + var + ", rax\n";
         }
-        case ReductionKind::MATHOP__MATHOPE:
+        // case ReductionKind::OP__MATHOPE:
+        // {
+        //     return this->children[0]->compile_rec(vars, label_gen, rvalue);
+        // }
+        case ReductionKind::OP__BOOLOPE: 
+        case ReductionKind::BOOLOPE__BOOLOPT:
+        case ReductionKind::BOOLOPT__CMPOP:
+        case ReductionKind::CMPOP__BITWISEOPE:
+        case ReductionKind::BITWISEOPE__BITWISEOPT:
+        case ReductionKind::BITWISEOPT__MATHOPE: 
+        case ReductionKind::MOTHOPE__MATHOPT: 
+        case ReductionKind::MATHOPT__MATHOPF:
         {
             return this->children[0]->compile_rec(vars, label_gen, rvalue);
+        }
+        case ReductionKind::BITWISEOPE__BITWISEOPE_BWAND_BITWISEOPT:
+        {
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
+            return left + right + "\tpop rax\n\tpop rdi\n\tand rax, rdi\n\tpush rax\n";
+        }
+        case ReductionKind::BITWISEOPE__BITWISEOPE_BWOR_BITWISEOPT:
+        {
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
+            return left + right + "\tpop rax\n\tpop rdi\n\tor rax, rdi\n\tpush rax\n";
+        }
+        case ReductionKind::BITWISEOPT__TILDE_BITWISEOPT:
+        {
+            std::string value = this->children[1]->compile_rec(vars, label_gen, true);
+            return value + "\tpop rax\n\tnot rax\n\tpush rax\n";
+        }
+        case ReductionKind::CMPOP__CMPOP_EQEQ_BITWISEOPE:
+        {
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
+            return left + right + "\tpop rax\n\tpop rdi\n\tcmp rax, rdi\n\tsete al\n\tmovzx rax, al\n\tpush rax\n";
+        }
+        case ReductionKind::CMPOP__CMPOP_NOTEQ_BITWISEOPE:
+        {
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
+            return left + right + "\tpop rax\n\tpop rdi\n\tcmp rax, rdi\n\tsetne al\n\tmovzx rax, al\n\tpush rax\n";
+        }
+        case ReductionKind::CMPOP__CMPOP_GT_BITWISEOPE:
+        {
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
+            return left + right + "\tpop rdi\n\tpop rax\n\tcmp rax, rdi\n\tsetg al\n\tmovzx rax, al\n\tpush rax\n";
+        }   
+        case ReductionKind::CMPOP__CMPOP_LT_BITWISEOPE:
+        {
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
+            return left + right + "\tpop rdi\n\tpop rax\n\tcmp rax, rdi\n\tsetl al\n\tmovzx rax, al\n\tpush rax\n";
+        }   
+        case ReductionKind::CMPOP__CMPOP_GTEQ_BITWISEOPE:
+        {
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
+            return left + right + "\tpop rdi\n\tpop rax\n\tcmp rax, rdi\n\tsetge al\n\tmovzx rax, al\n\tpush rax\n";
+        }   
+        case ReductionKind::CMPOP__CMPOP_LTEQ_BITWISEOPE:
+        {
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
+            return left + right + "\tpop rdi\n\tpop rax\n\tcmp rax, rdi\n\tsetle al\n\tmovzx rax, al\n\tpush rax\n";
+        }
+        case ReductionKind::BOOLOPT__NOT_CMPOP:
+        {
+            std::string value = this->children[1]->compile_rec(vars, label_gen, true);
+            return value + "\tpop rax\n\tcmp rax, 0\n\tsetne al\n\tmovzx rax, al\n\tpush rax\n";
         }
         case ReductionKind::MATHOPE__MATHOPE_PLUS_MATHOPT:
         {
@@ -91,14 +161,14 @@ std::string AST::compile_rec(std::set<std::string>& vars, Labelgenerator& label_
             std::string right = this->children[2]->compile_rec(vars, label_gen, true);
             return left + right + "\tpop rdi\n\tpop rax\n\tsub rax, rdi\n\tpush rax\n";
         }
-        case ReductionKind::MOTHOPE__MATHOPT:
-        {
-            return this->children[0]->compile_rec(vars, label_gen, rvalue);
-        }   
-        case ReductionKind::MATHOPT__MATHOPF:
-        {
-            return this->children[0]->compile_rec(vars, label_gen, rvalue);
-        }
+        // case ReductionKind::MOTHOPE__MATHOPT:
+        // {
+        //     return this->children[0]->compile_rec(vars, label_gen, rvalue);
+        // }   
+        // case ReductionKind::MATHOPT__MATHOPF:
+        // {
+        //     return this->children[0]->compile_rec(vars, label_gen, rvalue);
+        // }
         case ReductionKind::MATHOPT__MATHOPT_DIV_MATHOPF:
         {
             std::string left = this->children[0]->compile_rec(vars, label_gen, true);
@@ -122,7 +192,7 @@ std::string AST::compile_rec(std::set<std::string>& vars, Labelgenerator& label_
             std::string item_info = this->children[0]->compile_rec(vars, label_gen, rvalue);
             return "\tmov rax, " + item_info + "\n\tpush rax\n";
         }
-        case ReductionKind::MATHOPF__OPENBRACKETS_MATHOPE_CLOSEBRACKETS:
+        case ReductionKind::MATHOPF__OPENBRACKETS_OP_CLOSEBRACKETS:
         {
             return this->children[1]->compile_rec(vars, label_gen, rvalue);
         }
@@ -135,14 +205,26 @@ std::string AST::compile_rec(std::set<std::string>& vars, Labelgenerator& label_
         {
             return this->children[1]->compile_rec(vars, label_gen, rvalue);
         }
-        case ReductionKind::CONDITIONAL__IF_OPEN_MATHOP_CLOSE_BLOCK:
+        case ReductionKind::CONDITIONAL__IF_OPEN_OP_CLOSE_BLOCK:
         {
             std::string condition = this->children[1]->compile_rec(vars, label_gen, true);
             std::string block = this->children[3]->compile_rec(vars, label_gen, rvalue);
             std::string label = label_gen.get_label();
             return condition + "\tpop rax\n\tcmp rax, 0\n\tje " + label + "\n" + block + label + ":\n";
         }
-        case ReductionKind::CONDITIONAL__WHILE_OPEN_MATHOP_CLOSE_BLOCK:
+        case ReductionKind::BOOLOPE__BOOLOPE_AND_BOOLOPT:
+        {
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
+            return left + right + "\tpop rax\n\tpop rdi\n\tand rax, rdi\n\tcmp rax, 0\n\tsetne al\n\tmovzx rax, al\n\tpush rax\n";
+        }
+        case ReductionKind::BOOLOPE__BOOLOPE_OR_BOOLOPT:
+        {
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
+            return left + right + "\tpop rax\n\tpop rdi\n\tor rax, rdi\n\tcmp rax, 0\n\tsetne al\n\tmovzx rax, al\n\tpush rax\n";
+        }
+        case ReductionKind::CONDITIONAL__WHILE_OPEN_OP_CLOSE_BLOCK:
         {
             std::string condition = this->children[2]->compile_rec(vars, label_gen, true);
             std::string block = this->children[4]->compile_rec(vars, label_gen, rvalue);
@@ -151,7 +233,7 @@ std::string AST::compile_rec(std::set<std::string>& vars, Labelgenerator& label_
             return entry_label + ":\n" + condition + "\tpop rax\n\tcmp rax, 0\n\tje " + 
                 exit_label + "\n" + block + "\tjmp "+entry_label+"\n" + exit_label + ":\n";
         }
-        case ReductionKind::CONDITIONAL__IF_OPEN_MATHOP_CLOSE_BLOCK_ELSE_BLOCK:
+        case ReductionKind::CONDITIONAL__IF_OPEN_OP_CLOSE_BLOCK_ELSE_BLOCK:
         {
             std::string condition = this->children[2]->compile_rec(vars, label_gen, true);
             std::string block = this->children[4]->compile_rec(vars, label_gen, rvalue);

@@ -14,16 +14,16 @@ const char* reduction_kind_to_string(ReductionKind kind){
             return "STATEMENT__EQUALITY";
         case ReductionKind::STATEMENT__RETURN:
             return "STATEMENT__RETURN";
-        case ReductionKind::EQUALITY__NAME_EQ_MATHOP:
+        case ReductionKind::EQUALITY__NAME_EQ_OP:
             return "EQUALITY__NAME_EQ_MATHOP";
-        case ReductionKind::RETURN__RET_ITEM:
-            return "RETURN__RET_ITEM";
+        case ReductionKind::RETURN__RET_OP:
+            return "RETURN__RET_OP";
         case ReductionKind::ITEM__NAME:
             return "ITEM__NAME";
         case ReductionKind::ITEM__NUMBER:
             return "ITEM_NUMBER";
-        case ReductionKind::MATHOP__MATHOPE:
-            return "MATHOP__MATHOPE";
+        // case ReductionKind::OP__MATHOPE:
+        //     return "MATHOP__MATHOPE";
         case ReductionKind::MATHOPE__MATHOPE_PLUS_MATHOPT:
             return "MATHOPE__MATHOPT_PLUS_MATHOPE";
         case ReductionKind::MATHOPE__MATHOPE_MINUS_MATHOPT:
@@ -38,13 +38,13 @@ const char* reduction_kind_to_string(ReductionKind kind){
             return "MATHOPT__MATHOPF";
         case ReductionKind::MATHOPF__MINUS_MATHOPF:
             return "MATHOPF__MINUS_MATHOPF";
-        case ReductionKind::MATHOPF__OPENBRACKETS_MATHOPE_CLOSEBRACKETS:
+        case ReductionKind::MATHOPF__OPENBRACKETS_OP_CLOSEBRACKETS:
             return "MATHOPF__OPENBRACKETS_MATHOPE_CLOSEBRACKETS";
         case ReductionKind::MATHOPF__ITEM:
             return "MATHOPF__ITEM";
-        case ReductionKind::CONDITIONAL__IF_OPEN_MATHOP_CLOSE_BLOCK:
+        case ReductionKind::CONDITIONAL__IF_OPEN_OP_CLOSE_BLOCK:
             return "STATEMENT__IF_OPEN_MATHOP_CLOSE_BLOCK";
-        case ReductionKind::CONDITIONAL__IF_OPEN_MATHOP_CLOSE_BLOCK_ELSE_BLOCK:
+        case ReductionKind::CONDITIONAL__IF_OPEN_OP_CLOSE_BLOCK_ELSE_BLOCK:
             return "STATEMENT__IF_OPEN_MATHOP_CLOSE_BLOCK_ELSE_BLOCK";
         case ReductionKind::BLOCK__OPENCURLY_CODE_CLOSECURLY:
             return "BLOCK__OPENCURLY_CODE_CLOSECURLY";
@@ -54,12 +54,46 @@ const char* reduction_kind_to_string(ReductionKind kind){
             return "CODE__CONDITIONAL_CODE";
         case ReductionKind::MATHOPT__MATHOPT_MOD_MATHOPF:
             return "MATHOPT__MATHOPT_MOD_MATHOPF";
-        case ReductionKind::CONDITIONAL__WHILE_OPEN_MATHOP_CLOSE_BLOCK:
+        case ReductionKind::CONDITIONAL__WHILE_OPEN_OP_CLOSE_BLOCK:
             return "CONDITIONAL__WHILE_OPEN_MATHOP_CLOSE_BLOCK";
         case ReductionKind::ITEM__TRUE: 
             return "ITEM__TRUE";
         case ReductionKind::ITEM__FALSE:
             return "ITEM__FALSE";
+        case ReductionKind::OP__BOOLOPE:
+            return "OP__BOOLOPE";
+        case ReductionKind::BOOLOPE__BOOLOPE_AND_BOOLOPT:
+            return "BOOLOPE__BOOLOPE_AND_BOOLOPT";
+        case ReductionKind::BOOLOPE__BOOLOPE_OR_BOOLOPT:
+            return "BOOLOPE__BOOLOPE_OR_BOOLOPT";
+        case ReductionKind::BOOLOPE__BOOLOPT:
+            return "BOOLOPE__BOOLOPT";
+        case ReductionKind::BOOLOPT__NOT_CMPOP:
+            return "BOOLOPT__NOT_CMPOP";
+        case ReductionKind::BOOLOPT__CMPOP:
+            return "BOOLOPT__CMPOP";
+        case ReductionKind::CMPOP__CMPOP_EQEQ_BITWISEOPE:
+            return "CMPOP__CMPOP_EQEQ_BITWISEOPE";
+        case ReductionKind::CMPOP__CMPOP_NOTEQ_BITWISEOPE:
+            return "CMPOP__CMPOP_NOTEQ_BITWISEOPE";
+        case ReductionKind::CMPOP__CMPOP_LT_BITWISEOPE:
+            return "CMPOP__CMPOP_LT_BITWISEOPE";
+        case ReductionKind::CMPOP__CMPOP_LTEQ_BITWISEOPE:
+            return "CMPOP__CMPOP_LTEQ_BITWISEOPE";
+        case ReductionKind::CMPOP__CMPOP_GT_BITWISEOPE:
+            return "CMPOP__CMPOP_GT_BITWISEOP";
+        case ReductionKind::CMPOP__CMPOP_GTEQ_BITWISEOPE:
+            return "CMPOP__CMPOP_GTEQ_BITWISEOPE";
+        case ReductionKind::CMPOP__BITWISEOPE:
+            return "CMPOP__BITWISEOPE";
+        case ReductionKind::BITWISEOPE__BITWISEOPE_BWAND_BITWISEOPT:
+            return "BIWISEOPE__BITWISEOPE_BWAND_BITWISEOPT";
+        case ReductionKind::BITWISEOPE__BITWISEOPE_BWOR_BITWISEOPT:
+            return "BITWISEOPE__BITWISEOPE_BWOR_BITWISEOPT";
+        case ReductionKind::BITWISEOPT__MATHOPE:
+            return "BITWISEOPT__MATHOPE";
+        case ReductionKind::BITWISEOPT__TILDE_BITWISEOPT:
+            return "BITWISEOPT__TILDE_BITWISEOPT";
     }
     return "ERROR: UNKNOWN REDUCTION KIND";
 }

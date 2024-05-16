@@ -1,0 +1,8 @@
+input = 5;
+count = 1;
+res = 1;
+while(count <= input){
+    res = res * count;
+    count = count + 1;
+}
+return res;

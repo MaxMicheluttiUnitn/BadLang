@@ -401,6 +401,7 @@ std::map<TokenType,LR1_State*> LR1_State::compute_neighbours(){
     std::map<TokenType,LR1_State*> res;
     for(std::pair<TokenType,std::set<LookaheadRule>> item: transition_keys){
         if(reduction_keys.contains(item.first)){
+            std::cerr<<(*this)<<std::endl;
             std::cerr<<"SR conflict"<<std::endl;
             exit(EXIT_FAILURE);
         }

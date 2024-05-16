@@ -36,7 +36,7 @@ std::ostream & operator<<(std::ostream & os, const TokenType& type){
         case TokenType::START: os<<"START SYMBOL";break;
         case TokenType::STATEMENT: os<<"STATEMENT";break;
         case TokenType::CODE: os<<"CODE";break;
-        case TokenType::MATH_OP: os<<"MATH_OP";break;
+        case TokenType::OP: os<<"OP";break;
         case TokenType::MATH_OP_E: os<<"MATH_OP_E";break;
         case TokenType::MATH_OP_F: os<<"MATH_OP_F";break;
         case TokenType::MATH_OP_T: os<<"MATH_OP_T";break;
@@ -51,6 +51,23 @@ std::ostream & operator<<(std::ostream & os, const TokenType& type){
         case TokenType::_modulus: os<<"_modulus";break;
         case TokenType::_true: os<<"_true";break;
         case TokenType::_false: os<<"_false";break;
+        case TokenType::BOOL_OP_E: os<<"BOOL_OP_E";break;
+        case TokenType::BOOL_OP_T: os<<"BOOL_OP_T";break;
+        case TokenType::CMP_OP: os<<"CMP_OP";break;
+        case TokenType::BITWISE_OP_E: os<<"BITWISE_OP_E";break;
+        case TokenType::BITWISE_OP_T: os<<"BITWISE_OP_T";break;
+        case TokenType::_and: os<<"_and";break;
+        case TokenType::_or: os<<"_or";break;
+        case TokenType::_not: os<<"_not";break;
+        case TokenType::_lt: os<<"_lt";break;
+        case TokenType::_gt: os<<"_gt";break;
+        case TokenType::_equal_equal: os<<"_equal_equal";break;
+        case TokenType::_not_equal: os<<"_not_equal";break;
+        case TokenType::_lt_eq: os<<"_lt_eq";break;
+        case TokenType::_gt_eq: os<<"_gt_eq";break;
+        case TokenType::_bitwise_and: os<<"_bitwise_and";break;
+        case TokenType::_bitwise_or: os<<"_bitwise_or";break;
+        case TokenType::_tilde: os<<"_tilde";break;
         default: 
         case TokenType::NoneType:os<<"error_token";break;
     }
@@ -61,7 +78,12 @@ bool tokentype_is_literal(const TokenType& t){
         case TokenType::START:
         case TokenType::STATEMENT:
         case TokenType::CODE:
-        case TokenType::MATH_OP:
+        case TokenType::OP:
+        case TokenType::BOOL_OP_E:
+        case TokenType::BOOL_OP_T:
+        case TokenType::CMP_OP:
+        case TokenType::BITWISE_OP_E:
+        case TokenType::BITWISE_OP_T:
         case TokenType::MATH_OP_E:
         case TokenType::MATH_OP_F:
         case TokenType::MATH_OP_T:
@@ -79,7 +101,12 @@ bool tokentype_is_production_symbol(const TokenType& t){
         case TokenType::START:
         case TokenType::STATEMENT:
         case TokenType::CODE:
-        case TokenType::MATH_OP:
+        case TokenType::OP:
+        case TokenType::BOOL_OP_E:
+        case TokenType::BOOL_OP_T:
+        case TokenType::CMP_OP:
+        case TokenType::BITWISE_OP_E:
+        case TokenType::BITWISE_OP_T:
         case TokenType::MATH_OP_E:
         case TokenType::MATH_OP_F:
         case TokenType::MATH_OP_T:
