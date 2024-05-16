@@ -51,6 +51,8 @@ enum class ReductionKind{
     BITWISEOPE__BITWISEOPT,
     BITWISEOPT__TILDE_BITWISEOPT,
     BITWISEOPT__MATHOPE,
+    STATEMENT__BREAK,
+    STATEMENT__CONTINUE,
 };
 
 // for each reduction kind, print its name

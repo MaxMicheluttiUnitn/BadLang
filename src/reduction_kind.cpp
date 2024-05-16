@@ -94,6 +94,10 @@ const char* reduction_kind_to_string(ReductionKind kind){
             return "BITWISEOPT__MATHOPE";
         case ReductionKind::BITWISEOPT__TILDE_BITWISEOPT:
             return "BITWISEOPT__TILDE_BITWISEOPT";
+        case ReductionKind::STATEMENT__BREAK:
+            return "STATEMENT__BREAK";
+        case ReductionKind::STATEMENT__CONTINUE:
+            return "STATEMENT__CONTINUE";
     }
     return "ERROR: UNKNOWN REDUCTION KIND";
 }

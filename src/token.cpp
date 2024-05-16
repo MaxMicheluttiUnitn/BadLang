@@ -68,6 +68,8 @@ std::ostream & operator<<(std::ostream & os, const TokenType& type){
         case TokenType::_bitwise_and: os<<"_bitwise_and";break;
         case TokenType::_bitwise_or: os<<"_bitwise_or";break;
         case TokenType::_tilde: os<<"_tilde";break;
+        case TokenType::_break: os<<"_break";break;
+        case TokenType::_continue: os<<"_continue";break;
         default: 
         case TokenType::NoneType:os<<"error_token";break;
     }

@@ -19,7 +19,7 @@ class AST{
     ReductionKind reduction_kind;
     std::vector<AST*> children;
     void print_depth(std::ostream&,int)const;
-    std::string compile_rec(std::set<std::string>&, Labelgenerator&, bool);
+    std::string compile_rec(std::set<std::string>&, Labelgenerator&, bool,const std::string&, const std::string&);
     std::string get_bss(const std::set<std::string>&);
     std::string get_text();
     std::string get_data();

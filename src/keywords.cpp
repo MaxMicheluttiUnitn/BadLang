@@ -9,6 +9,8 @@ Keywords::Keywords(){
     this->items.insert(std::make_pair(std::string("else"),Token(TokenType::_else)));
     this->items.insert(std::make_pair(std::string("true"),Token(TokenType::_true)));
     this->items.insert(std::make_pair(std::string("false"),Token(TokenType::_false)));
+    this->items.insert(std::make_pair(std::string("break"),Token(TokenType::_break)));
+    this->items.insert(std::make_pair(std::string("continue"),Token(TokenType::_continue)));
     // this->items.insert(std::make_pair(std::string("elif"),Token(TokenType::_elif)));
 }
 Keywords::~Keywords(){}

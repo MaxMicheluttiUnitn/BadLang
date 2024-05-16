@@ -408,6 +408,13 @@ Grammar Grammar::get_badlang_grammar(){
     right.clear();
     right.push_back(TokenType::MATH_OP_E);
     g.add_rule(Reduction(TokenType::BITWISE_OP_T,right),ReductionKind::BITWISEOPT__MATHOPE);
-
+    // STATEMENT -> _break
+    right.clear();
+    right.push_back(TokenType::_break);
+    g.add_rule(Reduction(TokenType::STATEMENT,right),ReductionKind::STATEMENT__BREAK);
+    // STATEMENT -> _continue
+    right.clear();
+    right.push_back(TokenType::_continue);
+    g.add_rule(Reduction(TokenType::STATEMENT,right),ReductionKind::STATEMENT__CONTINUE);
     return g;
 }

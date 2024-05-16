@@ -27,53 +27,53 @@ TokenType AST::get_type()const{
     return this->item.type;
 }
 
-std::string AST::compile_rec(std::set<std::string>& vars, Labelgenerator& label_gen, bool rvalue){
+std::string AST::compile_rec(std::set<std::string>& vars, Labelgenerator& label_gen, bool rvalue, const std::string& entry_block_label, const std::string& exit_block_label){
     switch (this->reduction_kind)
     {
         case ReductionKind::START__CODE:
         {
-            return this->children[0]->compile_rec(vars, label_gen, false);
+            return this->children[0]->compile_rec(vars, label_gen, false, entry_block_label, exit_block_label);
         }
         case ReductionKind::CODE__STATEMENT:
         {
-            return this->children[0]->compile_rec(vars, label_gen, false);
+            return this->children[0]->compile_rec(vars, label_gen, false, entry_block_label, exit_block_label);
         }
         case ReductionKind::CODE__STATEMENT_SEMI_CODE:
         {
-            std::string left = this->children[0]->compile_rec(vars, label_gen, false);
-            return left + this->children[2]->compile_rec(vars, label_gen, false);
+            std::string left = this->children[0]->compile_rec(vars, label_gen, false, entry_block_label, exit_block_label);
+            return left + this->children[2]->compile_rec(vars, label_gen, false, entry_block_label, exit_block_label);
         }
         case ReductionKind::CODE__CONDITIONAL_CODE:
         {
-            std::string left = this->children[0]->compile_rec(vars, label_gen, false);
-            std::string right = this->children[1]->compile_rec(vars, label_gen, false);
+            std::string left = this->children[0]->compile_rec(vars, label_gen, false, entry_block_label, exit_block_label);
+            std::string right = this->children[1]->compile_rec(vars, label_gen, false, entry_block_label, exit_block_label);
             return left + right;
         }
         case ReductionKind::STATEMENT__EQUALITY:
         {
-            return this->children[0]->compile_rec(vars, label_gen, rvalue);
+            return this->children[0]->compile_rec(vars, label_gen, rvalue, entry_block_label, exit_block_label);
         }
         case ReductionKind::STATEMENT__RETURN:
         {
-            return this->children[0]->compile_rec(vars, label_gen, rvalue);
+            return this->children[0]->compile_rec(vars, label_gen, rvalue, entry_block_label, exit_block_label);
         }
         case ReductionKind::RETURN__RET_OP:
         {
-            std::string code = this->children[1]->compile_rec(vars, label_gen, true);
+            std::string code = this->children[1]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
             return code + "\tpop rdi\n\tmov rax, 60\n\tsyscall\n";
         }
         case ReductionKind::ITEM__NAME:
         {
-            return this->children[0]->compile_rec(vars, label_gen, rvalue);
+            return this->children[0]->compile_rec(vars, label_gen, rvalue, entry_block_label, exit_block_label);
         }
         case ReductionKind::ITEM__NUMBER: case ReductionKind::ITEM__TRUE: case ReductionKind::ITEM__FALSE:
         {
-            return this->children[0]->compile_rec(vars, label_gen, false);
+            return this->children[0]->compile_rec(vars, label_gen, false, entry_block_label, exit_block_label);
         }
         case ReductionKind::EQUALITY__NAME_EQ_OP:
         {
-            std::string value = this->children[2]->compile_rec(vars, label_gen, true);
-            std::string var = this->children[0]->compile_rec(vars, label_gen, false);
+            std::string value = this->children[2]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            std::string var = this->children[0]->compile_rec(vars, label_gen, false, entry_block_label, exit_block_label);
             return value + "\tpop rax\n\tmov " + var + ", rax\n";
         }
         // case ReductionKind::OP__MATHOPE:
@@ -89,76 +89,76 @@ std::string AST::compile_rec(std::set<std::string>& vars, Labelgenerator& label_
         case ReductionKind::MOTHOPE__MATHOPT: 
         case ReductionKind::MATHOPT__MATHOPF:
         {
-            return this->children[0]->compile_rec(vars, label_gen, rvalue);
+            return this->children[0]->compile_rec(vars, label_gen, rvalue, entry_block_label, exit_block_label);
         }
         case ReductionKind::BITWISEOPE__BITWISEOPE_BWAND_BITWISEOPT:
         {
-            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
-            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
             return left + right + "\tpop rax\n\tpop rdi\n\tand rax, rdi\n\tpush rax\n";
         }
         case ReductionKind::BITWISEOPE__BITWISEOPE_BWOR_BITWISEOPT:
         {
-            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
-            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
             return left + right + "\tpop rax\n\tpop rdi\n\tor rax, rdi\n\tpush rax\n";
         }
         case ReductionKind::BITWISEOPT__TILDE_BITWISEOPT:
         {
-            std::string value = this->children[1]->compile_rec(vars, label_gen, true);
+            std::string value = this->children[1]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
             return value + "\tpop rax\n\tnot rax\n\tpush rax\n";
         }
         case ReductionKind::CMPOP__CMPOP_EQEQ_BITWISEOPE:
         {
-            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
-            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
             return left + right + "\tpop rax\n\tpop rdi\n\tcmp rax, rdi\n\tsete al\n\tmovzx rax, al\n\tpush rax\n";
         }
         case ReductionKind::CMPOP__CMPOP_NOTEQ_BITWISEOPE:
         {
-            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
-            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
             return left + right + "\tpop rax\n\tpop rdi\n\tcmp rax, rdi\n\tsetne al\n\tmovzx rax, al\n\tpush rax\n";
         }
         case ReductionKind::CMPOP__CMPOP_GT_BITWISEOPE:
         {
-            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
-            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
             return left + right + "\tpop rdi\n\tpop rax\n\tcmp rax, rdi\n\tsetg al\n\tmovzx rax, al\n\tpush rax\n";
         }   
         case ReductionKind::CMPOP__CMPOP_LT_BITWISEOPE:
         {
-            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
-            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
             return left + right + "\tpop rdi\n\tpop rax\n\tcmp rax, rdi\n\tsetl al\n\tmovzx rax, al\n\tpush rax\n";
         }   
         case ReductionKind::CMPOP__CMPOP_GTEQ_BITWISEOPE:
         {
-            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
-            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
             return left + right + "\tpop rdi\n\tpop rax\n\tcmp rax, rdi\n\tsetge al\n\tmovzx rax, al\n\tpush rax\n";
         }   
         case ReductionKind::CMPOP__CMPOP_LTEQ_BITWISEOPE:
         {
-            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
-            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
             return left + right + "\tpop rdi\n\tpop rax\n\tcmp rax, rdi\n\tsetle al\n\tmovzx rax, al\n\tpush rax\n";
         }
         case ReductionKind::BOOLOPT__NOT_CMPOP:
         {
-            std::string value = this->children[1]->compile_rec(vars, label_gen, true);
+            std::string value = this->children[1]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
             return value + "\tpop rax\n\tcmp rax, 0\n\tsetne al\n\tmovzx rax, al\n\tpush rax\n";
         }
         case ReductionKind::MATHOPE__MATHOPE_PLUS_MATHOPT:
         {
-            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
-            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
             return left + right + "\tpop rax\n\tpop rdi\n\tadd rax, rdi\n\tpush rax\n";
         }
         case ReductionKind::MATHOPE__MATHOPE_MINUS_MATHOPT:
         {
-            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
-            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
             return left + right + "\tpop rdi\n\tpop rax\n\tsub rax, rdi\n\tpush rax\n";
         }
         // case ReductionKind::MOTHOPE__MATHOPT:
@@ -171,80 +171,88 @@ std::string AST::compile_rec(std::set<std::string>& vars, Labelgenerator& label_
         // }
         case ReductionKind::MATHOPT__MATHOPT_DIV_MATHOPF:
         {
-            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
-            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
             return left + right + "\tpop rdi\n\tpop rax\n\tmov rdx, 0\n\tidiv rdi\n\tpush rax\n";
         }
         case ReductionKind::MATHOPT__MATHOPT_MOD_MATHOPF:
         {
-            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
-            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
             return left + right + "\tpop rdi\n\tpop rax\n\tmov rdx, 0\n\tidiv rdi\n\tpush rdx\n";
         }
         case ReductionKind::MATHOPT__MATHOPT_TIMES_MATHOPF:
         {
-            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
-            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
             return left + right + "\tpop rax\n\tpop rdi\n\timul rdi\n\tpush rax\n";
         }
         case ReductionKind::MATHOPF__ITEM:
         {
-            std::string item_info = this->children[0]->compile_rec(vars, label_gen, rvalue);
+            std::string item_info = this->children[0]->compile_rec(vars, label_gen, rvalue, entry_block_label, exit_block_label);
             return "\tmov rax, " + item_info + "\n\tpush rax\n";
         }
         case ReductionKind::MATHOPF__OPENBRACKETS_OP_CLOSEBRACKETS:
         {
-            return this->children[1]->compile_rec(vars, label_gen, rvalue);
+            return this->children[1]->compile_rec(vars, label_gen, rvalue, entry_block_label, exit_block_label);
         }
         case ReductionKind::MATHOPF__MINUS_MATHOPF:
         {
-            std::string item_info = this->children[1]->compile_rec(vars, label_gen, rvalue);
+            std::string item_info = this->children[1]->compile_rec(vars, label_gen, rvalue, entry_block_label, exit_block_label);
             return item_info + "\tpop rax\n\tneg rax\n\tpush rax\n";
         }
         case ReductionKind::BLOCK__OPENCURLY_CODE_CLOSECURLY:
         {
-            return this->children[1]->compile_rec(vars, label_gen, rvalue);
+            return this->children[1]->compile_rec(vars, label_gen, rvalue, entry_block_label, exit_block_label);
         }
         case ReductionKind::CONDITIONAL__IF_OPEN_OP_CLOSE_BLOCK:
         {
-            std::string condition = this->children[1]->compile_rec(vars, label_gen, true);
-            std::string block = this->children[3]->compile_rec(vars, label_gen, rvalue);
+            std::string condition = this->children[1]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            std::string block = this->children[3]->compile_rec(vars, label_gen, rvalue, entry_block_label, exit_block_label);
             std::string label = label_gen.get_label();
             return condition + "\tpop rax\n\tcmp rax, 0\n\tje " + label + "\n" + block + label + ":\n";
         }
         case ReductionKind::BOOLOPE__BOOLOPE_AND_BOOLOPT:
         {
-            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
-            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
             return left + right + "\tpop rax\n\tpop rdi\n\tand rax, rdi\n\tcmp rax, 0\n\tsetne al\n\tmovzx rax, al\n\tpush rax\n";
         }
         case ReductionKind::BOOLOPE__BOOLOPE_OR_BOOLOPT:
         {
-            std::string left = this->children[0]->compile_rec(vars, label_gen, true);
-            std::string right = this->children[2]->compile_rec(vars, label_gen, true);
+            std::string left = this->children[0]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            std::string right = this->children[2]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
             return left + right + "\tpop rax\n\tpop rdi\n\tor rax, rdi\n\tcmp rax, 0\n\tsetne al\n\tmovzx rax, al\n\tpush rax\n";
         }
         case ReductionKind::CONDITIONAL__WHILE_OPEN_OP_CLOSE_BLOCK:
         {
-            std::string condition = this->children[2]->compile_rec(vars, label_gen, true);
-            std::string block = this->children[4]->compile_rec(vars, label_gen, rvalue);
             std::string entry_label = label_gen.get_label();
             std::string exit_label = label_gen.get_label();
+            std::string condition = this->children[2]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            std::string block = this->children[4]->compile_rec(vars, label_gen, rvalue, entry_label, exit_label);
             return entry_label + ":\n" + condition + "\tpop rax\n\tcmp rax, 0\n\tje " + 
                 exit_label + "\n" + block + "\tjmp "+entry_label+"\n" + exit_label + ":\n";
         }
+        case ReductionKind::STATEMENT__BREAK:
+        {
+            return "\tjmp " + exit_block_label + "\n";
+        }
+        case ReductionKind::STATEMENT__CONTINUE:
+        {
+            return "\tjmp " + entry_block_label + "\n";
+        }
         case ReductionKind::CONDITIONAL__IF_OPEN_OP_CLOSE_BLOCK_ELSE_BLOCK:
         {
-            std::string condition = this->children[2]->compile_rec(vars, label_gen, true);
-            std::string block = this->children[4]->compile_rec(vars, label_gen, rvalue);
-            std::string else_block = this->children[6]->compile_rec(vars, label_gen, rvalue);
+            std::string condition = this->children[2]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            std::string block = this->children[4]->compile_rec(vars, label_gen, rvalue, entry_block_label, exit_block_label);
+            std::string else_block = this->children[6]->compile_rec(vars, label_gen, rvalue, entry_block_label, exit_block_label);
             std::string label = label_gen.get_label();
             std::string label2 = label_gen.get_label();
             return condition + "\tpop rax\n\tcmp rax, 0\n\tje " + label + "\n" + block + "\tjmp " + label2 + "\n" + label + ":\n" + else_block + label2 + ":\n";
         }
         case ReductionKind::CODE__CONDITIONAL:
         {
-            return this->children[0]->compile_rec(vars, label_gen, rvalue);
+            return this->children[0]->compile_rec(vars, label_gen, rvalue, entry_block_label, exit_block_label);
         }
         case ReductionKind::NOT_A_REDUCTION:
         {
@@ -306,7 +314,7 @@ std::string AST::compile()
 {
     std::set<std::string> defined_variables = std::set<std::string>();
     Labelgenerator label_gen = Labelgenerator();
-    std::string main_code = "_start:\n" + this->compile_rec(defined_variables,label_gen,false);
+    std::string main_code = "_start:\n" + this->compile_rec(defined_variables,label_gen,false,"_start","");
     std::string bss_code = this->get_bss(defined_variables);
     std::string data_code = this->get_data();
     std::string text_code = this->get_text();

@@ -57,6 +57,8 @@ enum class TokenType{
     _lt,
     _gt,
     _tilde,
+    _break,
+    _continue,
 };
 
 class Token;

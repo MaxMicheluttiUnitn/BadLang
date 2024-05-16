@@ -1,8 +1,13 @@
 input = 5;
 count = 1;
 res = 1;
-while(count <= input){
+while(true){
     res = res * count;
     count = count + 1;
+    if(count <= input){
+        continue;
+    }else{
+        break;
+    }
 }
 return res;
