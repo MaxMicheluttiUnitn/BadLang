@@ -1,13 +1,6 @@
 input = 5;
-count = 1;
 res = 1;
-while(true){
-    res = res * count;
-    count = count + 1;
-    if(count <= input){
-        continue;
-    }else{
-        break;
-    }
+for(i=1;i<=input;i++){
+    res = res * i;
 }
 return res;

@@ -66,6 +66,8 @@ const char* reduction_kind_to_string(ReductionKind kind){
             return "BOOLOPE__BOOLOPE_AND_BOOLOPT";
         case ReductionKind::BOOLOPE__BOOLOPE_OR_BOOLOPT:
             return "BOOLOPE__BOOLOPE_OR_BOOLOPT";
+        case ReductionKind::BOOLOPE__BOOLOPE_XOR_BOOLOPT:
+            return "BOOLOPE__BOOLOPE_XOR_BOOLOPT";
         case ReductionKind::BOOLOPE__BOOLOPT:
             return "BOOLOPE__BOOLOPT";
         case ReductionKind::BOOLOPT__NOT_CMPOP:
@@ -89,6 +91,8 @@ const char* reduction_kind_to_string(ReductionKind kind){
         case ReductionKind::BITWISEOPE__BITWISEOPE_BWAND_BITWISEOPT:
             return "BIWISEOPE__BITWISEOPE_BWAND_BITWISEOPT";
         case ReductionKind::BITWISEOPE__BITWISEOPE_BWOR_BITWISEOPT:
+            return "BITWISEOPE__BITWISEOPE_BWXOR_BITWISEOPT";
+        case ReductionKind::BITWISEOPE__BITWISEOPE_BWXOR_BITWISEOPT:
             return "BITWISEOPE__BITWISEOPE_BWOR_BITWISEOPT";
         case ReductionKind::BITWISEOPT__MATHOPE:
             return "BITWISEOPT__MATHOPE";
@@ -98,6 +102,12 @@ const char* reduction_kind_to_string(ReductionKind kind){
             return "STATEMENT__BREAK";
         case ReductionKind::STATEMENT__CONTINUE:
             return "STATEMENT__CONTINUE";
+        case ReductionKind::CONDITIONAL__FOR_OPEN_EQUALITY_SEMI_OP_SEMI_EQUALITY_CLOSE_BLOCK:
+            return "CONDITIONAL__FOR_OPEN_EQUALITY_SEMI_OP_SEMI_EQUALITY_CLOSE_BLOCK";
+        case ReductionKind::EQUALITY__NAME_PLUPLUS:
+            return "EQUALITY__NAME_PLUPLUS";
+        case ReductionKind::EQUALITY__NAME_MINUSMINUS:
+            return "EQUALITY__NAME_MINUSMINUS";
     }
     return "ERROR: UNKNOWN REDUCTION KIND";
 }

@@ -56,6 +56,7 @@ std::vector<Token> TokenizedData::tokenize(const std::string& data){
     std::vector<Token> tokens;
     std::stringstream buffer;
     Keywords kws;
+    bool rvalue = false;
     for(unsigned int i=0;i<data.length();i++){
         char current_char = data.at(i);
         if(iswspace(current_char) || (current_char == '\n') || (current_char == '\r') || (current_char == '\t')){continue;}
@@ -116,12 +117,14 @@ std::vector<Token> TokenizedData::tokenize(const std::string& data){
         }
         if(current_char == ';'){
             tokens.push_back(Token(TokenType::semicolon));
+            rvalue = false;
             continue;
         }
         if(current_char == '='){
             i++;
             if(i == data.length()){
                 tokens.push_back(Token(TokenType::_equals));
+                rvalue = true;
                 continue;
             }else if(data.at(i) == '='){
                 tokens.push_back(Token(TokenType::_equal_equal));
@@ -129,6 +132,7 @@ std::vector<Token> TokenizedData::tokenize(const std::string& data){
             }else{
                 i--;
                 tokens.push_back(Token(TokenType::_equals));
+                rvalue = true;
                 continue;
             }
         }
@@ -149,12 +153,36 @@ std::vector<Token> TokenizedData::tokenize(const std::string& data){
             continue;
         }
         if(current_char == '+'){
-            tokens.push_back(Token(TokenType::_plus));
-            continue;
+            i++;
+            if(i == data.length()){
+                tokens.push_back(Token(TokenType::_plus));
+                continue;
+            }else if(data.at(i) == '+'){
+                tokens.push_back(Token(TokenType::_plusplus));
+                continue;
+            }else{
+                i--;
+                tokens.push_back(Token(TokenType::_plus));
+                continue;
+            }
         }
         if(current_char == '-'){
-            tokens.push_back(Token(TokenType::_minus));
-            continue;
+            if(rvalue){
+                tokens.push_back(Token(TokenType::_minus));
+                continue;
+            }
+            i++;
+            if(i == data.length()){
+                tokens.push_back(Token(TokenType::_minus));
+                continue;
+            }else if(data.at(i) == '-'){
+                tokens.push_back(Token(TokenType::_minusminus));
+                continue;
+            }else{
+                i--;
+                tokens.push_back(Token(TokenType::_minus));
+                continue;
+            }
         }
         if(current_char == '*'){
             tokens.push_back(Token(TokenType::_times));
@@ -189,6 +217,20 @@ std::vector<Token> TokenizedData::tokenize(const std::string& data){
             }else{
                 i--;
                 tokens.push_back(Token(TokenType::_bitwise_or));
+                continue;
+            }
+        }
+        if(current_char == '^'){
+            i++;
+            if(i == data.length()){
+                tokens.push_back(Token(TokenType::_bitwise_xor));
+                continue;
+            }else if(data.at(i) == '^'){
+                tokens.push_back(Token(TokenType::_xor));
+                continue;
+            }else{
+                i--;
+                tokens.push_back(Token(TokenType::_bitwise_xor));
                 continue;
             }
         }

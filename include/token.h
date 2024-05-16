@@ -59,6 +59,10 @@ enum class TokenType{
     _tilde,
     _break,
     _continue,
+    _plusplus,
+    _minusminus,
+    _bitwise_xor,
+    _xor
 };
 
 class Token;

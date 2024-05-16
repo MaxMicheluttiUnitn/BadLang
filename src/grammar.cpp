@@ -330,6 +330,12 @@ Grammar Grammar::get_badlang_grammar(){
     right.push_back(TokenType::_or);
     right.push_back(TokenType::BOOL_OP_T);
     g.add_rule(Reduction(TokenType::BOOL_OP_E,right),ReductionKind::BOOLOPE__BOOLOPE_OR_BOOLOPT);
+    // BOOL_OP_E -> BOOL_OP_E ^^ BOOL_OP_T
+    right.clear();
+    right.push_back(TokenType::BOOL_OP_E);
+    right.push_back(TokenType::_xor);
+    right.push_back(TokenType::BOOL_OP_T);
+    g.add_rule(Reduction(TokenType::BOOL_OP_E,right),ReductionKind::BOOLOPE__BOOLOPE_XOR_BOOLOPT);
     // BOOL_OP_E -> BOOL_OP_T
     right.clear();
     right.push_back(TokenType::BOOL_OP_T);
@@ -395,6 +401,12 @@ Grammar Grammar::get_badlang_grammar(){
     right.push_back(TokenType::_bitwise_or);
     right.push_back(TokenType::BITWISE_OP_T);
     g.add_rule(Reduction(TokenType::BITWISE_OP_E,right),ReductionKind::BITWISEOPE__BITWISEOPE_BWOR_BITWISEOPT);
+    // BITWISE_OP_E -> BITWISE_OP_E ^ BITWISE_OP_T
+    right.clear();
+    right.push_back(TokenType::BITWISE_OP_E);
+    right.push_back(TokenType::_bitwise_xor);
+    right.push_back(TokenType::BITWISE_OP_T);
+    g.add_rule(Reduction(TokenType::BITWISE_OP_E,right),ReductionKind::BITWISEOPE__BITWISEOPE_BWXOR_BITWISEOPT);
     // BITWISE_OP_E -> BITWISE_OP_T
     right.clear();
     right.push_back(TokenType::BITWISE_OP_T);
@@ -416,5 +428,28 @@ Grammar Grammar::get_badlang_grammar(){
     right.clear();
     right.push_back(TokenType::_continue);
     g.add_rule(Reduction(TokenType::STATEMENT,right),ReductionKind::STATEMENT__CONTINUE);
+    // CONDITIONAL -> _for ( EQUALITY ; OP ; EQUALITY ) BLOCK
+    right.clear();
+    right.push_back(TokenType::_for);
+    right.push_back(TokenType::_open_brackets);
+    right.push_back(TokenType::EQUALITY);
+    right.push_back(TokenType::semicolon);
+    right.push_back(TokenType::OP);
+    right.push_back(TokenType::semicolon);
+    right.push_back(TokenType::EQUALITY);
+    right.push_back(TokenType::_close_brackets);
+    right.push_back(TokenType::BLOCK);
+    g.add_rule(Reduction(TokenType::CONDITIONAL,right),ReductionKind::CONDITIONAL__FOR_OPEN_EQUALITY_SEMI_OP_SEMI_EQUALITY_CLOSE_BLOCK);
+    // EQUALITY -> NAME ++
+    right.clear();
+    right.push_back(TokenType::name);
+    right.push_back(TokenType::_plusplus);
+    g.add_rule(Reduction(TokenType::EQUALITY,right),ReductionKind::EQUALITY__NAME_PLUPLUS);
+    // EQUALITY -> NAME --
+    right.clear();
+    right.push_back(TokenType::name);
+    right.push_back(TokenType::_minusminus);
+    g.add_rule(Reduction(TokenType::EQUALITY,right),ReductionKind::EQUALITY__NAME_MINUSMINUS);
+
     return g;
 }
