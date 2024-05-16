@@ -155,7 +155,23 @@ std::vector<Token> TokenizedData::tokenize(const std::string& data){
             continue;
         }
         if(current_char == '/'){
-            tokens.push_back(Token(TokenType::_divide));
+            i++;
+            if(i == data.length()){
+                tokens.push_back(Token(TokenType::_divide));
+                continue;
+            }
+            current_char = data.at(i);
+            if(current_char == '/'){
+                // this is a comment ignore rest of line
+                while (current_char != '\n' && current_char != '\0')
+                {
+                    i++;
+                    if(i == data.length()){break;}
+                    current_char = data.at(i);
+                }
+                continue;
+            }
+            i--;
             continue;
         }
         // SKIP EMPTYSPACE
