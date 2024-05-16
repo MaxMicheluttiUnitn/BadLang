@@ -8,6 +8,7 @@ a = a + 1;
 }
 while(c){
     // This is a comment
-    c = c - 1;
+    c = c - true;
+    c = c + false;
 }
 return c;

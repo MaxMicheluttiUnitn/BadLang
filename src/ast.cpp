@@ -65,7 +65,7 @@ std::string AST::compile_rec(std::set<std::string>& vars, Labelgenerator& label_
         {
             return this->children[0]->compile_rec(vars, label_gen, rvalue);
         }
-        case ReductionKind::ITEM__NUMBER:
+        case ReductionKind::ITEM__NUMBER: case ReductionKind::ITEM__TRUE: case ReductionKind::ITEM__FALSE:
         {
             return this->children[0]->compile_rec(vars, label_gen, false);
         }
@@ -165,8 +165,9 @@ std::string AST::compile_rec(std::set<std::string>& vars, Labelgenerator& label_
             return this->children[0]->compile_rec(vars, label_gen, rvalue);
         }
         case ReductionKind::NOT_A_REDUCTION:
-            {
-                if(this->item.type == TokenType::name){
+        {
+            switch(this->item.type){
+                case TokenType::name:{
                     if(!rvalue){
                         vars.insert(this->item.value.value());
                     }else{
@@ -177,18 +178,26 @@ std::string AST::compile_rec(std::set<std::string>& vars, Labelgenerator& label_
                     }
                     return "[var_" + this->item.value.value()+"]";
                 }
-                else if(this->item.type == TokenType::int_literal){
+                case TokenType::int_literal:{
                     return this->item.value.value();
                 }
-                else{
+                case TokenType::_true:{
+                    return "1";
+                }
+                case TokenType::_false:{
+                    return "0";
+                }
+                default:{
                     std::cout<<"ERROR: "<<this->item<<std::endl;
                     return std::string();
                 }
             }
-        default:
+        }
+        default:{
             std::cout<<"ERROR: "<<this->reduction_kind<<std::endl;
             errors::print_error("Unknown reduction kind");
             exit(EXIT_FAILURE);
+        }
     }
 }
 

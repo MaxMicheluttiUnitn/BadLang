@@ -31,6 +31,8 @@ enum class ReductionKind{
     CODE__CONDITIONAL_CODE,
     MATHOPT__MATHOPT_MOD_MATHOPF,
     CONDITIONAL__WHILE_OPEN_MATHOP_CLOSE_BLOCK,
+    ITEM__TRUE,
+    ITEM__FALSE
 };
 
 // for each reduction kind, print its name

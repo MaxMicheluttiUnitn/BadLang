@@ -229,6 +229,14 @@ Grammar Grammar::get_badlang_grammar(){
     right.clear();
     right.push_back(TokenType::int_literal);
     g.add_rule(Reduction(TokenType::ITEM,right),ReductionKind::ITEM__NUMBER);
+    // ITEM -> _true
+    right.clear();
+    right.push_back(TokenType::_true);
+    g.add_rule(Reduction(TokenType::ITEM,right),ReductionKind::ITEM__TRUE);
+    // ITEM -> _false
+    right.clear();
+    right.push_back(TokenType::_false);
+    g.add_rule(Reduction(TokenType::ITEM,right),ReductionKind::ITEM__FALSE);
     // MATH_OP -> MATH_OP_E
     right.clear();
     right.push_back(TokenType::MATH_OP_E);
@@ -306,6 +314,6 @@ Grammar Grammar::get_badlang_grammar(){
     right.push_back(TokenType::_close_brackets);
     right.push_back(TokenType::BLOCK);
     g.add_rule(Reduction(TokenType::CONDITIONAL,right),ReductionKind::CONDITIONAL__WHILE_OPEN_MATHOP_CLOSE_BLOCK);
-    
+
     return g;
 }

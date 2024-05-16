@@ -28,6 +28,8 @@ enum class TokenType{
     name,
     int_literal,
     semicolon,
+    _true,
+    _false,
     _equals,
     _plus,
     _minus,
