@@ -74,6 +74,11 @@ std::ostream & operator<<(std::ostream & os, const TokenType& type){
         case TokenType::_minusminus: os<<"_minusminus";break;
         case TokenType::_xor: os<<"_xor";break;
         case TokenType::_bitwise_xor: os<<"_bitwise_xor";break;
+        case TokenType::_pluseq: os<<"_pluseq";break;
+        case TokenType::_minuseq: os<<"_minuseq";break;
+        case TokenType::_timeseq: os<<"_timeseq";break;
+        case TokenType::_divideeq: os<<"_divideeq";break;
+        case TokenType::_moduluseq: os<<"_moduluseq";break;
         default: 
         case TokenType::NoneType:os<<"error_token";break;
     }

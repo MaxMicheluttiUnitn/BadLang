@@ -146,6 +146,7 @@ std::vector<Token> TokenizedData::tokenize(const std::string& data){
         }
         if(current_char == '{'){
             tokens.push_back(Token(TokenType::_open_curly));
+            rvalue = false;
             continue;
         }
         if(current_char == '}'){
@@ -159,6 +160,9 @@ std::vector<Token> TokenizedData::tokenize(const std::string& data){
                 continue;
             }else if(data.at(i) == '+'){
                 tokens.push_back(Token(TokenType::_plusplus));
+                continue;
+            }else if(data.at(i) == '='){
+                tokens.push_back(Token(TokenType::_pluseq));
                 continue;
             }else{
                 i--;
@@ -178,6 +182,9 @@ std::vector<Token> TokenizedData::tokenize(const std::string& data){
             }else if(data.at(i) == '-'){
                 tokens.push_back(Token(TokenType::_minusminus));
                 continue;
+            }else if(data.at(i) == '='){
+                tokens.push_back(Token(TokenType::_minuseq));
+                continue;
             }else{
                 i--;
                 tokens.push_back(Token(TokenType::_minus));
@@ -185,12 +192,32 @@ std::vector<Token> TokenizedData::tokenize(const std::string& data){
             }
         }
         if(current_char == '*'){
-            tokens.push_back(Token(TokenType::_times));
-            continue;
+            i++;
+            if(i == data.length()){
+                tokens.push_back(Token(TokenType::_times));
+                continue;
+            }else if(data.at(i) == '='){
+                tokens.push_back(Token(TokenType::_timeseq));
+                continue;
+            }else{
+                i--;
+                tokens.push_back(Token(TokenType::_times));
+                continue;
+            }
         }
         if(current_char == '%'){
-            tokens.push_back(Token(TokenType::_modulus));
-            continue;
+            i++;
+            if(i == data.length()){
+                tokens.push_back(Token(TokenType::_modulus));
+                continue;
+            }else if(data.at(i) == '='){
+                tokens.push_back(Token(TokenType::_moduluseq));
+                continue;
+            }else{
+                i--;
+                tokens.push_back(Token(TokenType::_modulus));
+                continue;
+            }
         }
         if(current_char == '&'){
             i++;
@@ -297,6 +324,9 @@ std::vector<Token> TokenizedData::tokenize(const std::string& data){
                     current_char = data.at(i);
                 }
                 i--;
+                continue;
+            }else if(current_char == '='){
+                tokens.push_back(Token(TokenType::_divideeq));
                 continue;
             }else{
                 // this is a divide

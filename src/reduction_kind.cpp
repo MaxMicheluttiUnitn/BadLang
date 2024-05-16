@@ -108,6 +108,16 @@ const char* reduction_kind_to_string(ReductionKind kind){
             return "EQUALITY__NAME_PLUPLUS";
         case ReductionKind::EQUALITY__NAME_MINUSMINUS:
             return "EQUALITY__NAME_MINUSMINUS";
+        case ReductionKind::EQUALITY__NAME_PLUSEQ_OP:
+            return "EQUALITY__NAME_PLUSEQ_OP";
+        case ReductionKind::EQUALITY__NAME_MINUSEQ_OP:
+            return "EQUALITY__NAME_MINUSEQ_OP";
+        case ReductionKind::EQUALITY__NAME_TIMESEQ_OP:
+            return "EQUALITY__NAME_TIMESEQ_OP";
+        case ReductionKind::EQUALITY__NAME_DIVIDEEQ_OP:
+            return "EQUALITY__NAME_DIVIDEEQ_OP";
+        case ReductionKind::EQUALITY__NAME_MODULUSEQ_OP:
+            return "EQUALITY__NAME_MODULUSEQ_OP";
     }
     return "ERROR: UNKNOWN REDUCTION KIND";
 }

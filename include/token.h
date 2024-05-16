@@ -62,7 +62,12 @@ enum class TokenType{
     _plusplus,
     _minusminus,
     _bitwise_xor,
-    _xor
+    _xor,
+    _pluseq,
+    _minuseq,
+    _timeseq,
+    _divideeq,
+    _moduluseq,
 };
 
 class Token;

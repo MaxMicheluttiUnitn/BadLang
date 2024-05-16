@@ -450,6 +450,36 @@ Grammar Grammar::get_badlang_grammar(){
     right.push_back(TokenType::name);
     right.push_back(TokenType::_minusminus);
     g.add_rule(Reduction(TokenType::EQUALITY,right),ReductionKind::EQUALITY__NAME_MINUSMINUS);
+    // EQUALITY -> NAME += OP
+    right.clear();
+    right.push_back(TokenType::name);
+    right.push_back(TokenType::_pluseq);
+    right.push_back(TokenType::OP);
+    g.add_rule(Reduction(TokenType::EQUALITY,right),ReductionKind::EQUALITY__NAME_PLUSEQ_OP);
+    // EQUALITY -> NAME -= OP
+    right.clear();
+    right.push_back(TokenType::name);
+    right.push_back(TokenType::_minuseq);
+    right.push_back(TokenType::OP);
+    g.add_rule(Reduction(TokenType::EQUALITY,right),ReductionKind::EQUALITY__NAME_MINUSEQ_OP);
+    // EQUALITY -> NAME *= OP
+    right.clear();
+    right.push_back(TokenType::name);
+    right.push_back(TokenType::_timeseq);
+    right.push_back(TokenType::OP);
+    g.add_rule(Reduction(TokenType::EQUALITY,right),ReductionKind::EQUALITY__NAME_TIMESEQ_OP);
+    // EQUALITY -> NAME /= OP
+    right.clear();
+    right.push_back(TokenType::name);
+    right.push_back(TokenType::_divideeq);
+    right.push_back(TokenType::OP);
+    g.add_rule(Reduction(TokenType::EQUALITY,right),ReductionKind::EQUALITY__NAME_DIVIDEEQ_OP);
+    // EQUALITY -> NAME %= OP
+    right.clear();
+    right.push_back(TokenType::name);
+    right.push_back(TokenType::_moduluseq);
+    right.push_back(TokenType::OP);
+    g.add_rule(Reduction(TokenType::EQUALITY,right),ReductionKind::EQUALITY__NAME_MODULUSEQ_OP);
 
     return g;
 }

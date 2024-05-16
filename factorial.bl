@@ -1,6 +1,6 @@
 input = 5;
 res = 1;
 for(i=1;i<=input;i++){
-    res = res * i;
+    res *= i;
 }
 return res;

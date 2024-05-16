@@ -292,7 +292,36 @@ std::string AST::compile_rec(std::set<std::string>& vars, Labelgenerator& label_
             std::string var = this->children[0]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
             return "\tmov rax, " + var + "\n\tsub rax, 1\n\tmov " + var + ", rax\n";
         }
-        
+        case ReductionKind::EQUALITY__NAME_PLUSEQ_OP:
+        {
+            std::string var = this->children[0]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            std::string value = this->children[2]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            return value + "\tpop rax\n\tmov rdi, " + var + "\n\tadd rdi, rax\n\tmov " + var + ", rdi\n";
+        }
+        case ReductionKind::EQUALITY__NAME_MINUSEQ_OP:
+        {
+            std::string var = this->children[0]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            std::string value = this->children[2]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            return value + "\tpop rax\n\tmov rdi, " + var + "\n\tsub rdi, rax\n\tmov " + var + ", rdi\n";
+        }
+        case ReductionKind::EQUALITY__NAME_TIMESEQ_OP:
+        {
+            std::string var = this->children[0]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            std::string value = this->children[2]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            return value + "\tpop rdi\n\tmov rax, " + var + "\n\timul rdi\n\tmov " + var + ", rax\n";
+        }
+        case ReductionKind::EQUALITY__NAME_DIVIDEEQ_OP:
+        {
+            std::string var = this->children[0]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            std::string value = this->children[2]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            return value + "\tpop rdi\n\tmov rax, " + var + "\n\tmov rdx, 0\n\tidiv rdi\n\tmov " + var + ", rax\n";
+        }
+        case ReductionKind::EQUALITY__NAME_MODULUSEQ_OP:
+        {
+            std::string var = this->children[0]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            std::string value = this->children[2]->compile_rec(vars, label_gen, true, entry_block_label, exit_block_label);
+            return value + "\tpop rdi\n\tmov rax, " + var + "\n\tmov rdx, 0\n\tidiv rdi\n\tmov " + var + ", rdx\n";
+        }
         case ReductionKind::NOT_A_REDUCTION:
         {
             switch(this->item.type){
