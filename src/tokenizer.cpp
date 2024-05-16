@@ -316,7 +316,7 @@ std::vector<Token> TokenizedData::tokenize(const std::string& data){
             }
             current_char = data.at(i);
             if(current_char == '/'){
-                // this is a comment ignore rest of line
+                // this is a one-line comment ignore rest of line
                 while (current_char != '\n' && current_char != '\0')
                 {
                     i++;
@@ -324,6 +324,26 @@ std::vector<Token> TokenizedData::tokenize(const std::string& data){
                     current_char = data.at(i);
                 }
                 i--;
+                continue;
+            }else if(current_char == '*'){
+                // this is a multiline comment ignore unitl */ is found
+                bool last_was_star = false;
+                while(true){
+                    i++;
+                    if(i == data.length()){
+                        errors::print_error("multiline comment was not closed");
+                        exit(EXIT_FAILURE);
+                    }
+                    current_char = data.at(i);
+                    if(current_char == '*'){
+                        last_was_star = true;
+                        continue;
+                    }
+                    if(current_char == '/' && last_was_star){
+                        break;
+                    }
+                    last_was_star = false;
+                }
                 continue;
             }else if(current_char == '='){
                 tokens.push_back(Token(TokenType::_divideeq));
