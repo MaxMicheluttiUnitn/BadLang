@@ -105,14 +105,21 @@ ReductionKind Grammar::get_kind_of_reduction(const Reduction& r)const{
 Reduction Grammar::get_reduction_of_kind(ReductionKind i)const{
     return this->id_to_rule.at(i);
 }
+
 std::set<TokenType> Grammar::first(const std::vector<TokenType>& word)const{
+    // for(TokenType t: word){
+    //     std::cout<<t<<std::endl;
+    // }
+    // std::cout<<"---"<<std::endl;
+    // std::cout.flush();
     std::set<TokenType> res = std::set<TokenType>();
     if(word.size()==0){
         res.insert(TokenType::NoneType);
         return res;
     }else if(word.size()==1){
-        TokenType left = word.at(0);
+        TokenType left = TokenType(word.at(0));
         if(tokentype_is_literal(left)){
+            //std::cout<<"literal"<<std::endl;
             res.insert(left);
             return res;
         }else{
@@ -120,6 +127,7 @@ std::set<TokenType> Grammar::first(const std::vector<TokenType>& word)const{
             for(Reduction p: prods){
                 res.merge(this->first(p.get_right()));
             }
+            return res;
         }
     }else{
         int j=0;
@@ -169,17 +177,32 @@ Grammar Grammar::get_badlang_grammar(){
     right.clear();
     right.push_back(TokenType::RETURN);
     g.add_rule(Reduction(TokenType::STATEMENT,right),ReductionKind::STATEMENT__RETURN);
+    // CODE -> CONDITIONAL
+    right.clear();
+    right.push_back(TokenType::CONDITIONAL);
+    g.add_rule(Reduction(TokenType::CODE,right),ReductionKind::CODE__CONDITIONAL);
+    // CODE -> CONDITIONAL CODE
+    right.clear();
+    right.push_back(TokenType::CONDITIONAL);
+    right.push_back(TokenType::CODE);
+    g.add_rule(Reduction(TokenType::CODE,right),ReductionKind::CODE__CONDITIONAL_CODE);
+    // BLOCK -> _open_curly CODE _close_curly
+    right.clear();
+    right.push_back(TokenType::_open_curly);
+    right.push_back(TokenType::CODE);
+    right.push_back(TokenType::_close_curly);
+    g.add_rule(Reduction(TokenType::BLOCK,right),ReductionKind::BLOCK__OPENCURLY_CODE_CLOSECURLY);
     // EQUALITY -> NAME = MATH_OP
     right.clear();
     right.push_back(TokenType::name);
     right.push_back(TokenType::_equals);
-    right.push_back(TokenType::MATH_OP);
-    g.add_rule(Reduction(TokenType::EQUALITY,right),ReductionKind::EQUALITY__NAME_EQ_MATHOP);
-    // RETURN -> return ITEM
+    right.push_back(TokenType::OP);
+    g.add_rule(Reduction(TokenType::EQUALITY,right),ReductionKind::EQUALITY__NAME_EQ_OP);
+    // RETURN -> return OP
     right.clear();
     right.push_back(TokenType::_return);
-    right.push_back(TokenType::ITEM);
-    g.add_rule(Reduction(TokenType::RETURN,right),ReductionKind::RETURN__RET_ITEM);
+    right.push_back(TokenType::OP);
+    g.add_rule(Reduction(TokenType::RETURN,right),ReductionKind::RETURN__RET_OP);
     // ITEM -> NAME
     right.clear();
     right.push_back(TokenType::name);
@@ -188,10 +211,18 @@ Grammar Grammar::get_badlang_grammar(){
     right.clear();
     right.push_back(TokenType::int_literal);
     g.add_rule(Reduction(TokenType::ITEM,right),ReductionKind::ITEM__NUMBER);
-    // MATH_OP -> MATH_OP_E
+    // ITEM -> _true
     right.clear();
-    right.push_back(TokenType::MATH_OP_E);
-    g.add_rule(Reduction(TokenType::MATH_OP,right),ReductionKind::MATHOP__MATHOPE);
+    right.push_back(TokenType::_true);
+    g.add_rule(Reduction(TokenType::ITEM,right),ReductionKind::ITEM__TRUE);
+    // ITEM -> _false
+    right.clear();
+    right.push_back(TokenType::_false);
+    g.add_rule(Reduction(TokenType::ITEM,right),ReductionKind::ITEM__FALSE);
+    // OP -> MATH_OP_E
+    // right.clear();
+    // right.push_back(TokenType::MATH_OP_E);
+    // g.add_rule(Reduction(TokenType::OP,right),ReductionKind::OP__MATHOPE);
     // MATH_OP_E -> MATH_OP_E + MATH_OP_T
     right.clear();
     right.push_back(TokenType::MATH_OP_E);
@@ -220,6 +251,12 @@ Grammar Grammar::get_badlang_grammar(){
     right.push_back(TokenType::_divide);
     right.push_back(TokenType::MATH_OP_F);
     g.add_rule(Reduction(TokenType::MATH_OP_T,right),ReductionKind::MATHOPT__MATHOPT_DIV_MATHOPF);
+    // MATH_OP_T -> MATH_OP_T % MATH_OP_F
+    right.clear();
+    right.push_back(TokenType::MATH_OP_T);
+    right.push_back(TokenType::_modulus);
+    right.push_back(TokenType::MATH_OP_F);
+    g.add_rule(Reduction(TokenType::MATH_OP_T,right),ReductionKind::MATHOPT__MATHOPT_MOD_MATHOPF);
     // MATH_OP_T -> MATH_OP_F
     right.clear();
     right.push_back(TokenType::MATH_OP_F);
@@ -241,16 +278,229 @@ Grammar Grammar::get_badlang_grammar(){
     right.push_back(TokenType::_minus);
     right.push_back(TokenType::MATH_OP_F);
     g.add_rule(Reduction(TokenType::MATH_OP_F,right),ReductionKind::MATHOPF__MINUS_MATHOPF);
-    // MATH_OP_F -> ( MATH_OP_E )
+    // MATH_OP_F -> ( OP )
     right.clear();
     right.push_back(TokenType::_open_brackets);
-    right.push_back(TokenType::MATH_OP_E);
+    right.push_back(TokenType::OP);
     right.push_back(TokenType::_close_brackets);
-    g.add_rule(Reduction(TokenType::MATH_OP_F,right),ReductionKind::MATHOPF__OPENBRACKETS_MATHOPE_CLOSEBRACKETS);
+    g.add_rule(Reduction(TokenType::MATH_OP_F,right),ReductionKind::MATHOPF__OPENBRACKETS_OP_CLOSEBRACKETS);
     // MATH_OP_F -> ITEM
     right.clear();
     right.push_back(TokenType::ITEM);
     g.add_rule(Reduction(TokenType::MATH_OP_F,right),ReductionKind::MATHOPF__ITEM);
+    // CONDITIONAL -> WHILE ( OP ) BLOCK
+    right.clear();
+    right.push_back(TokenType::_while);
+    right.push_back(TokenType::_open_brackets);
+    right.push_back(TokenType::OP);
+    right.push_back(TokenType::_close_brackets);
+    right.push_back(TokenType::BLOCK);
+    g.add_rule(Reduction(TokenType::CONDITIONAL,right),ReductionKind::CONDITIONAL__WHILE_OPEN_OP_CLOSE_BLOCK);
+    // OP -> BOOL_OP_E
+    right.clear();
+    right.push_back(TokenType::BOOL_OP_E);
+    g.add_rule(Reduction(TokenType::OP,right),ReductionKind::OP__BOOLOPE);
+    // BOOL_OP_E -> BOOL_OP_E && BOOL_OP_T
+    right.clear();
+    right.push_back(TokenType::BOOL_OP_E);
+    right.push_back(TokenType::_and);
+    right.push_back(TokenType::BOOL_OP_T);
+    g.add_rule(Reduction(TokenType::BOOL_OP_E,right),ReductionKind::BOOLOPE__BOOLOPE_AND_BOOLOPT);
+    // BOOL_OP_E -> BOOL_OP_E || BOOL_OP_T
+    right.clear();
+    right.push_back(TokenType::BOOL_OP_E);
+    right.push_back(TokenType::_or);
+    right.push_back(TokenType::BOOL_OP_T);
+    g.add_rule(Reduction(TokenType::BOOL_OP_E,right),ReductionKind::BOOLOPE__BOOLOPE_OR_BOOLOPT);
+    // BOOL_OP_E -> BOOL_OP_E ^^ BOOL_OP_T
+    right.clear();
+    right.push_back(TokenType::BOOL_OP_E);
+    right.push_back(TokenType::_xor);
+    right.push_back(TokenType::BOOL_OP_T);
+    g.add_rule(Reduction(TokenType::BOOL_OP_E,right),ReductionKind::BOOLOPE__BOOLOPE_XOR_BOOLOPT);
+    // BOOL_OP_E -> BOOL_OP_T
+    right.clear();
+    right.push_back(TokenType::BOOL_OP_T);
+    g.add_rule(Reduction(TokenType::BOOL_OP_E,right),ReductionKind::BOOLOPE__BOOLOPT);
+    // BOOL_OP_T -> ! CMP_OP
+    right.clear();
+    right.push_back(TokenType::_not);
+    right.push_back(TokenType::CMP_OP);
+    g.add_rule(Reduction(TokenType::BOOL_OP_T,right),ReductionKind::BOOLOPT__NOT_CMPOP);
+    // BOOL_OP_T -> CMP_OP
+    right.clear();
+    right.push_back(TokenType::CMP_OP);
+    g.add_rule(Reduction(TokenType::BOOL_OP_T,right),ReductionKind::BOOLOPT__CMPOP);
+    // CMP_OP -> CMP_OP == BITWISE_OP_E
+    right.clear();
+    right.push_back(TokenType::CMP_OP);
+    right.push_back(TokenType::_equal_equal);
+    right.push_back(TokenType::BITWISE_OP_E);
+    g.add_rule(Reduction(TokenType::CMP_OP,right),ReductionKind::CMPOP__CMPOP_EQEQ_BITWISEOPE);
+    // CMP_OP -> CMP_OP != BITWISE_OP_E
+    right.clear();
+    right.push_back(TokenType::CMP_OP);
+    right.push_back(TokenType::_not_equal);
+    right.push_back(TokenType::BITWISE_OP_E);
+    g.add_rule(Reduction(TokenType::CMP_OP,right),ReductionKind::CMPOP__CMPOP_NOTEQ_BITWISEOPE);
+    // CMP_OP -> CMP_OP < BITWISE_OP_E
+    right.clear();
+    right.push_back(TokenType::CMP_OP);
+    right.push_back(TokenType::_lt);
+    right.push_back(TokenType::BITWISE_OP_E);
+    g.add_rule(Reduction(TokenType::CMP_OP,right),ReductionKind::CMPOP__CMPOP_LT_BITWISEOPE);
+    // CMP_OP -> CMP_OP <= BITWISE_OP_E
+    right.clear();
+    right.push_back(TokenType::CMP_OP);
+    right.push_back(TokenType::_lt_eq);
+    right.push_back(TokenType::BITWISE_OP_E);
+    g.add_rule(Reduction(TokenType::CMP_OP,right),ReductionKind::CMPOP__CMPOP_LTEQ_BITWISEOPE);
+    // CMP_OP -> CMP_OP > BITWISE_OP_E
+    right.clear();
+    right.push_back(TokenType::CMP_OP);
+    right.push_back(TokenType::_gt);
+    right.push_back(TokenType::BITWISE_OP_E);
+    g.add_rule(Reduction(TokenType::CMP_OP,right),ReductionKind::CMPOP__CMPOP_GT_BITWISEOPE);
+    // CMP_OP -> CMP_OP >= BITWISE_OP_E
+    right.clear();
+    right.push_back(TokenType::CMP_OP);
+    right.push_back(TokenType::_gt_eq);
+    right.push_back(TokenType::BITWISE_OP_E);
+    g.add_rule(Reduction(TokenType::CMP_OP,right),ReductionKind::CMPOP__CMPOP_GTEQ_BITWISEOPE);
+    // CMP_OP -> BITWISE_OP_E
+    right.clear();
+    right.push_back(TokenType::BITWISE_OP_E);
+    g.add_rule(Reduction(TokenType::CMP_OP,right),ReductionKind::CMPOP__BITWISEOPE);
+    // BITWISE_OP_E -> BITWISE_OP_E & BITWISE_OP_T
+    right.clear();
+    right.push_back(TokenType::BITWISE_OP_E);
+    right.push_back(TokenType::_bitwise_and);
+    right.push_back(TokenType::BITWISE_OP_T);
+    g.add_rule(Reduction(TokenType::BITWISE_OP_E,right),ReductionKind::BITWISEOPE__BITWISEOPE_BWAND_BITWISEOPT);
+    // BITWISE_OP_E -> BITWISE_OP_E | BITWISE_OP_T
+    right.clear();
+    right.push_back(TokenType::BITWISE_OP_E);
+    right.push_back(TokenType::_bitwise_or);
+    right.push_back(TokenType::BITWISE_OP_T);
+    g.add_rule(Reduction(TokenType::BITWISE_OP_E,right),ReductionKind::BITWISEOPE__BITWISEOPE_BWOR_BITWISEOPT);
+    // BITWISE_OP_E -> BITWISE_OP_E ^ BITWISE_OP_T
+    right.clear();
+    right.push_back(TokenType::BITWISE_OP_E);
+    right.push_back(TokenType::_bitwise_xor);
+    right.push_back(TokenType::BITWISE_OP_T);
+    g.add_rule(Reduction(TokenType::BITWISE_OP_E,right),ReductionKind::BITWISEOPE__BITWISEOPE_BWXOR_BITWISEOPT);
+    // BITWISE_OP_E -> BITWISE_OP_T
+    right.clear();
+    right.push_back(TokenType::BITWISE_OP_T);
+    g.add_rule(Reduction(TokenType::BITWISE_OP_E,right),ReductionKind::BITWISEOPE__BITWISEOPT);
+    // BITWISE_OP_T -> ~ BITWISE_OP_T
+    right.clear();
+    right.push_back(TokenType::_tilde);
+    right.push_back(TokenType::BITWISE_OP_T);
+    g.add_rule(Reduction(TokenType::BITWISE_OP_T,right),ReductionKind::BITWISEOPT__TILDE_BITWISEOPT);
+    // BITWISE_OP_T -> MATH_OP_E
+    right.clear();
+    right.push_back(TokenType::MATH_OP_E);
+    g.add_rule(Reduction(TokenType::BITWISE_OP_T,right),ReductionKind::BITWISEOPT__MATHOPE);
+    // STATEMENT -> _break
+    right.clear();
+    right.push_back(TokenType::_break);
+    g.add_rule(Reduction(TokenType::STATEMENT,right),ReductionKind::STATEMENT__BREAK);
+    // STATEMENT -> _continue
+    right.clear();
+    right.push_back(TokenType::_continue);
+    g.add_rule(Reduction(TokenType::STATEMENT,right),ReductionKind::STATEMENT__CONTINUE);
+    // CONDITIONAL -> _for ( EQUALITY ; OP ; EQUALITY ) BLOCK
+    right.clear();
+    right.push_back(TokenType::_for);
+    right.push_back(TokenType::_open_brackets);
+    right.push_back(TokenType::EQUALITY);
+    right.push_back(TokenType::semicolon);
+    right.push_back(TokenType::OP);
+    right.push_back(TokenType::semicolon);
+    right.push_back(TokenType::EQUALITY);
+    right.push_back(TokenType::_close_brackets);
+    right.push_back(TokenType::BLOCK);
+    g.add_rule(Reduction(TokenType::CONDITIONAL,right),ReductionKind::CONDITIONAL__FOR_OPEN_EQUALITY_SEMI_OP_SEMI_EQUALITY_CLOSE_BLOCK);
+    // EQUALITY -> NAME ++
+    right.clear();
+    right.push_back(TokenType::name);
+    right.push_back(TokenType::_plusplus);
+    g.add_rule(Reduction(TokenType::EQUALITY,right),ReductionKind::EQUALITY__NAME_PLUPLUS);
+    // EQUALITY -> NAME --
+    right.clear();
+    right.push_back(TokenType::name);
+    right.push_back(TokenType::_minusminus);
+    g.add_rule(Reduction(TokenType::EQUALITY,right),ReductionKind::EQUALITY__NAME_MINUSMINUS);
+    // EQUALITY -> NAME += OP
+    right.clear();
+    right.push_back(TokenType::name);
+    right.push_back(TokenType::_pluseq);
+    right.push_back(TokenType::OP);
+    g.add_rule(Reduction(TokenType::EQUALITY,right),ReductionKind::EQUALITY__NAME_PLUSEQ_OP);
+    // EQUALITY -> NAME -= OP
+    right.clear();
+    right.push_back(TokenType::name);
+    right.push_back(TokenType::_minuseq);
+    right.push_back(TokenType::OP);
+    g.add_rule(Reduction(TokenType::EQUALITY,right),ReductionKind::EQUALITY__NAME_MINUSEQ_OP);
+    // EQUALITY -> NAME *= OP
+    right.clear();
+    right.push_back(TokenType::name);
+    right.push_back(TokenType::_timeseq);
+    right.push_back(TokenType::OP);
+    g.add_rule(Reduction(TokenType::EQUALITY,right),ReductionKind::EQUALITY__NAME_TIMESEQ_OP);
+    // EQUALITY -> NAME /= OP
+    right.clear();
+    right.push_back(TokenType::name);
+    right.push_back(TokenType::_divideeq);
+    right.push_back(TokenType::OP);
+    g.add_rule(Reduction(TokenType::EQUALITY,right),ReductionKind::EQUALITY__NAME_DIVIDEEQ_OP);
+    // EQUALITY -> NAME %= OP
+    right.clear();
+    right.push_back(TokenType::name);
+    right.push_back(TokenType::_moduluseq);
+    right.push_back(TokenType::OP);
+    g.add_rule(Reduction(TokenType::EQUALITY,right),ReductionKind::EQUALITY__NAME_MODULUSEQ_OP);
+    // CONDITIONAL -> _if ( OP ) BLOCK
+    right.clear();
+    right.push_back(TokenType::_if);
+    right.push_back(TokenType::_open_brackets);
+    right.push_back(TokenType::OP);
+    right.push_back(TokenType::_close_brackets);
+    right.push_back(TokenType::BLOCK);
+    g.add_rule(Reduction(TokenType::CONDITIONAL,right),ReductionKind::CONDITIONAL__IF_OPEN_OP_CLOSE_BLOCK);
+    // CONDITIONAL -> _if ( OP ) BLOCK ELSEIFS
+    right.clear();
+    right.push_back(TokenType::_if);
+    right.push_back(TokenType::_open_brackets);
+    right.push_back(TokenType::OP);
+    right.push_back(TokenType::_close_brackets);
+    right.push_back(TokenType::BLOCK);
+    right.push_back(TokenType::ELSEIFS);
+    g.add_rule(Reduction(TokenType::CONDITIONAL,right),ReductionKind::CONDITIONAL__IF_OPEN_OP_CLOSE_BLOCK_ELSEIFS);
+    // ELSEIFS -> _elif ( OP ) BLOCK ELSEIFS
+    right.clear();
+    right.push_back(TokenType::_elif);
+    right.push_back(TokenType::_open_brackets);
+    right.push_back(TokenType::OP);
+    right.push_back(TokenType::_close_brackets);
+    right.push_back(TokenType::BLOCK);
+    right.push_back(TokenType::ELSEIFS);
+    g.add_rule(Reduction(TokenType::ELSEIFS,right),ReductionKind::ELSEIFS__ELIF_OPEN_OP_CLOSE_BLOCK_ELSEIFS);
+    // ELSEIFS -> _elif ( OP ) BLOCK
+    right.clear();
+    right.push_back(TokenType::_elif);
+    right.push_back(TokenType::_open_brackets);
+    right.push_back(TokenType::OP);
+    right.push_back(TokenType::_close_brackets);
+    right.push_back(TokenType::BLOCK);
+    g.add_rule(Reduction(TokenType::ELSEIFS,right),ReductionKind::ELSEIFS__ELIF_OPEN_OP_CLOSE_BLOCK);
+    // ELSEIFS -> _else BLOCK
+    right.clear();
+    right.push_back(TokenType::_else);
+    right.push_back(TokenType::BLOCK);
+    g.add_rule(Reduction(TokenType::ELSEIFS,right),ReductionKind::ELSEIFS__ELSE_BLOCK);
 
     return g;
 }

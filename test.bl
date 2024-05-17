@@ -1,4 +1,14 @@
 a = 10 + 2;
 b = 20;
-c = (a + b) - 9 * (b - (10 + 6 * (4 / 3 + 1) * 2) - 6);
+c = (a + b) - 9 * - - (b - (10 + 6 * (4 % 3 + 1) * 2) - 6);
+if(c){
+c = c +1;}
+else{
+a = a + 1;
+}
+while(c){
+    // This is a comment
+    c = c - true;
+    c = c + false;
+}
 return c;

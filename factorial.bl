@@ -1,0 +1,9 @@
+input = 5;
+res = 1;
+/*
+    This is a multiline comment
+*/
+for(i=1;i<=input;i++){
+    res *= i;
+}
+return res;

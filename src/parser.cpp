@@ -45,11 +45,11 @@ AST* Parser::parse(const Grammar& g, TokenizedData& token_manager){
         }else if(reduce != std::nullopt){
             //std::cout<<"REDUCE"<<std::endl;
             DottedRule reduction = reduce.value();
-            std::vector<AST*> children = std::vector<AST*>(reduction.get_right().size());
-            for(int i=0; i<reduction.get_right().size();i++){
+            std::vector<AST*> children = std::vector<AST*>(reduction.right_size());
+            for(int i=0; i<reduction.right_size();i++){
                 symbol_stack.pop();
                 state_stack.pop();
-                children.at(reduction.get_right().size() - 1 - i) = nodes_stack.top();
+                children.at(reduction.right_size() - 1 - i) = nodes_stack.top();
                 nodes_stack.pop();
             }
             Reduction undotted_reduction = reduction.get_reduction();
@@ -64,6 +64,8 @@ AST* Parser::parse(const Grammar& g, TokenizedData& token_manager){
             state_stack.push(big_t);
             //std::cout<<reduction<<std::endl;
         }else{
+            std::cout<<b<<std::endl;
+            std::cout<<state_stack.top()<<std::endl;
             errors::print_error("syntax error unexpected token");
             exit(EXIT_FAILURE);
         }

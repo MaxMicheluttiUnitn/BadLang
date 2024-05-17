@@ -3,11 +3,15 @@
 Keywords::Keywords(){
     this->items = std::map<std::string,Token>();
     this->items.insert(std::make_pair(std::string("return"),Token(TokenType::_return)));
-    // this->items.insert(std::make_pair(std::string("for"),Token(TokenType::_for)));
-    // this->items.insert(std::make_pair(std::string("while"),Token(TokenType::_while)));
-    // this->items.insert(std::make_pair(std::string("if"),Token(TokenType::_if)));
-    // this->items.insert(std::make_pair(std::string("else"),Token(TokenType::_else)));
-    // this->items.insert(std::make_pair(std::string("elif"),Token(TokenType::_elif)));
+    this->items.insert(std::make_pair(std::string("for"),Token(TokenType::_for)));
+    this->items.insert(std::make_pair(std::string("while"),Token(TokenType::_while)));
+    this->items.insert(std::make_pair(std::string("if"),Token(TokenType::_if)));
+    this->items.insert(std::make_pair(std::string("else"),Token(TokenType::_else)));
+    this->items.insert(std::make_pair(std::string("true"),Token(TokenType::_true)));
+    this->items.insert(std::make_pair(std::string("false"),Token(TokenType::_false)));
+    this->items.insert(std::make_pair(std::string("break"),Token(TokenType::_break)));
+    this->items.insert(std::make_pair(std::string("continue"),Token(TokenType::_continue)));
+    this->items.insert(std::make_pair(std::string("elif"),Token(TokenType::_elif)));
 }
 Keywords::~Keywords(){}
 
