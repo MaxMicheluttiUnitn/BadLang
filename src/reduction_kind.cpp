@@ -42,10 +42,6 @@ const char* reduction_kind_to_string(ReductionKind kind){
             return "MATHOPF__OPENBRACKETS_MATHOPE_CLOSEBRACKETS";
         case ReductionKind::MATHOPF__ITEM:
             return "MATHOPF__ITEM";
-        case ReductionKind::CONDITIONAL__IF_OPEN_OP_CLOSE_BLOCK:
-            return "STATEMENT__IF_OPEN_MATHOP_CLOSE_BLOCK";
-        case ReductionKind::CONDITIONAL__IF_OPEN_OP_CLOSE_BLOCK_ELSE_BLOCK:
-            return "STATEMENT__IF_OPEN_MATHOP_CLOSE_BLOCK_ELSE_BLOCK";
         case ReductionKind::BLOCK__OPENCURLY_CODE_CLOSECURLY:
             return "BLOCK__OPENCURLY_CODE_CLOSECURLY";
         case ReductionKind::CODE__CONDITIONAL: 
@@ -118,6 +114,16 @@ const char* reduction_kind_to_string(ReductionKind kind){
             return "EQUALITY__NAME_DIVIDEEQ_OP";
         case ReductionKind::EQUALITY__NAME_MODULUSEQ_OP:
             return "EQUALITY__NAME_MODULUSEQ_OP";
+        case ReductionKind::CONDITIONAL__IF_OPEN_OP_CLOSE_BLOCK:
+            return "STATEMENT__IF_OPEN_MATHOP_CLOSE_BLOCK";
+        case ReductionKind::CONDITIONAL__IF_OPEN_OP_CLOSE_BLOCK_ELSEIFS:
+            return "CONDITIONAL__IF_OPEN_OP_CLOSE_BLOCK_ELSEIFS";
+        case ReductionKind::ELSEIFS__ELIF_OPEN_OP_CLOSE_BLOCK_ELSEIFS:
+            return "ELSEIFS__ELIF_OPEN_OP_CLOSE_BLOCK_ELSEIFS";
+        case ReductionKind::ELSEIFS__ELIF_OPEN_OP_CLOSE_BLOCK:
+            return "ELSEIFS__ELIF_OPEN_OP_CLOSE_BLOCK";
+        case ReductionKind::ELSEIFS__ELSE_BLOCK:
+            return "ELSEIFS__ELSE_BLOCK";
     }
     return "ERROR: UNKNOWN REDUCTION KIND";
 }

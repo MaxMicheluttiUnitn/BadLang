@@ -186,24 +186,6 @@ Grammar Grammar::get_badlang_grammar(){
     right.push_back(TokenType::CONDITIONAL);
     right.push_back(TokenType::CODE);
     g.add_rule(Reduction(TokenType::CODE,right),ReductionKind::CODE__CONDITIONAL_CODE);
-    // CONDITIONAL -> _if ( OP ) BLOCK
-    right.clear();
-    right.push_back(TokenType::_if);
-    right.push_back(TokenType::_open_brackets);
-    right.push_back(TokenType::OP);
-    right.push_back(TokenType::_close_brackets);
-    right.push_back(TokenType::BLOCK);
-    g.add_rule(Reduction(TokenType::CONDITIONAL,right),ReductionKind::CONDITIONAL__IF_OPEN_OP_CLOSE_BLOCK);
-    // CONDITIONAL -> _if ( OP ) BLOCK _else BLOCK
-    right.clear();
-    right.push_back(TokenType::_if);
-    right.push_back(TokenType::_open_brackets);
-    right.push_back(TokenType::OP);
-    right.push_back(TokenType::_close_brackets);
-    right.push_back(TokenType::BLOCK);
-    right.push_back(TokenType::_else);
-    right.push_back(TokenType::BLOCK);
-    g.add_rule(Reduction(TokenType::CONDITIONAL,right),ReductionKind::CONDITIONAL__IF_OPEN_OP_CLOSE_BLOCK_ELSE_BLOCK);
     // BLOCK -> _open_curly CODE _close_curly
     right.clear();
     right.push_back(TokenType::_open_curly);
@@ -480,6 +462,45 @@ Grammar Grammar::get_badlang_grammar(){
     right.push_back(TokenType::_moduluseq);
     right.push_back(TokenType::OP);
     g.add_rule(Reduction(TokenType::EQUALITY,right),ReductionKind::EQUALITY__NAME_MODULUSEQ_OP);
+    // CONDITIONAL -> _if ( OP ) BLOCK
+    right.clear();
+    right.push_back(TokenType::_if);
+    right.push_back(TokenType::_open_brackets);
+    right.push_back(TokenType::OP);
+    right.push_back(TokenType::_close_brackets);
+    right.push_back(TokenType::BLOCK);
+    g.add_rule(Reduction(TokenType::CONDITIONAL,right),ReductionKind::CONDITIONAL__IF_OPEN_OP_CLOSE_BLOCK);
+    // CONDITIONAL -> _if ( OP ) BLOCK ELSEIFS
+    right.clear();
+    right.push_back(TokenType::_if);
+    right.push_back(TokenType::_open_brackets);
+    right.push_back(TokenType::OP);
+    right.push_back(TokenType::_close_brackets);
+    right.push_back(TokenType::BLOCK);
+    right.push_back(TokenType::ELSEIFS);
+    g.add_rule(Reduction(TokenType::CONDITIONAL,right),ReductionKind::CONDITIONAL__IF_OPEN_OP_CLOSE_BLOCK_ELSEIFS);
+    // ELSEIFS -> _elif ( OP ) BLOCK ELSEIFS
+    right.clear();
+    right.push_back(TokenType::_elif);
+    right.push_back(TokenType::_open_brackets);
+    right.push_back(TokenType::OP);
+    right.push_back(TokenType::_close_brackets);
+    right.push_back(TokenType::BLOCK);
+    right.push_back(TokenType::ELSEIFS);
+    g.add_rule(Reduction(TokenType::ELSEIFS,right),ReductionKind::ELSEIFS__ELIF_OPEN_OP_CLOSE_BLOCK_ELSEIFS);
+    // ELSEIFS -> _elif ( OP ) BLOCK
+    right.clear();
+    right.push_back(TokenType::_elif);
+    right.push_back(TokenType::_open_brackets);
+    right.push_back(TokenType::OP);
+    right.push_back(TokenType::_close_brackets);
+    right.push_back(TokenType::BLOCK);
+    g.add_rule(Reduction(TokenType::ELSEIFS,right),ReductionKind::ELSEIFS__ELIF_OPEN_OP_CLOSE_BLOCK);
+    // ELSEIFS -> _else BLOCK
+    right.clear();
+    right.push_back(TokenType::_else);
+    right.push_back(TokenType::BLOCK);
+    g.add_rule(Reduction(TokenType::ELSEIFS,right),ReductionKind::ELSEIFS__ELSE_BLOCK);
 
     return g;
 }

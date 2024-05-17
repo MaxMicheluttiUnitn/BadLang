@@ -24,6 +24,7 @@ enum class TokenType{
     ITEM,
     BLOCK,
     CONDITIONAL,
+    ELSEIFS,
     _return,
     _if,
     _else,

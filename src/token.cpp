@@ -43,6 +43,7 @@ std::ostream & operator<<(std::ostream & os, const TokenType& type){
         case TokenType::EQUALITY: os<<"EQUALITY";break;
         case TokenType::RETURN: os<<"RETURN";break;
         case TokenType::ITEM: os<<"ITEM";break;
+        case TokenType::ELSEIFS: os<<"ELSEIFS";break;
         case TokenType::_end: os<<"$";break;
         case TokenType::BLOCK: os<<"BLOCK";break;
         case TokenType::_open_curly: os<<"_open_curly";break;
@@ -93,6 +94,7 @@ bool tokentype_is_literal(const TokenType& t){
         case TokenType::BOOL_OP_E:
         case TokenType::BOOL_OP_T:
         case TokenType::CMP_OP:
+        case TokenType::ELSEIFS:
         case TokenType::BITWISE_OP_E:
         case TokenType::BITWISE_OP_T:
         case TokenType::MATH_OP_E:
@@ -125,6 +127,7 @@ bool tokentype_is_production_symbol(const TokenType& t){
         case TokenType::RETURN:
         case TokenType::BLOCK:
         case TokenType::CONDITIONAL:
+        case TokenType::ELSEIFS:
         case TokenType::ITEM: return true;
         default: return false;
     }

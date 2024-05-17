@@ -64,6 +64,8 @@ AST* Parser::parse(const Grammar& g, TokenizedData& token_manager){
             state_stack.push(big_t);
             //std::cout<<reduction<<std::endl;
         }else{
+            std::cout<<b<<std::endl;
+            std::cout<<state_stack.top()<<std::endl;
             errors::print_error("syntax error unexpected token");
             exit(EXIT_FAILURE);
         }
