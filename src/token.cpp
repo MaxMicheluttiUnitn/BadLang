@@ -33,7 +33,7 @@ std::ostream & operator<<(std::ostream & os, const TokenType& type){
         case TokenType::semicolon: os<<"semicolon";break;
         case TokenType::_close_brackets: os<<"_closed_brackets";break;
         case TokenType::_open_brackets: os<<"_opened_brackets";break;
-        case TokenType::START: os<<"START SYMBOL";break;
+        case TokenType::START: os<<"START_SYMBOL";break;
         case TokenType::STATEMENT: os<<"STATEMENT";break;
         case TokenType::CODE: os<<"CODE";break;
         case TokenType::OP: os<<"OP";break;
